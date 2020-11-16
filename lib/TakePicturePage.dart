@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class TakePicturePage extends StatefulWidget {
 
-  PickedFile _args;
+  final PickedFile _args;
 
   TakePicturePage(this._args);
 
@@ -20,6 +19,8 @@ class TakePicturePage extends StatefulWidget {
 class _TakePictureState extends State<TakePicturePage> {
 
   PickedFile _file;
+  List<TagWidget> tags = [];
+  List<bool> states = [];
 
   _TakePictureState(this._file);
 
@@ -53,6 +54,14 @@ class _TakePictureState extends State<TakePicturePage> {
           SizedBox(height: 20,),
           OutlineButton(
             child: Text("Conferma e carica"),
+            onPressed: () {
+              print("Tag abilitati:");
+              tags.where((e) => states[e.index])
+                  .map((e) => e.label)
+                  .forEach((e) {
+                    print(e);
+                  });
+            },
           ),
           SizedBox(height: 20)
         ],
@@ -66,13 +75,27 @@ class _TakePictureState extends State<TakePicturePage> {
       return SizedBox(width: 5,);
     }
 
-    if (index > 21) return null;
+    if (index > 31) return null;
 
-    return new TagWidget("Tag ${1 + (index ~/ 2)}", index == 0, onTagSelectionChanged);
+    int tagIndex = 1 + (index ~/ 2);
+
+    while (tags.length <= tagIndex) {
+      states.add(false);
+      tags.add(new TagWidget("Tag ${tags.length}", getTagState, onTagSelectionChanged, tags.length));
+    }
+
+    return tags[tagIndex];
   }
 
-  void onTagSelectionChanged(bool state, String label) {
-    print("$label is now $state");
+  void onTagSelectionChanged(bool state, int index) {
+    setState(() {
+      states[index] = state;
+    });
+  }
+
+  bool getTagState(int index) {
+    if (index >= states.length) return false;
+    return states[index];
   }
 
 }

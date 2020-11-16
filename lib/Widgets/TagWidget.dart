@@ -2,36 +2,31 @@ import 'package:flutter/material.dart';
 
 class TagWidget extends StatefulWidget {
 
-  final String _label;
-  final bool _initialState;
+  final String label;
+  final Function _getState;
   final Function _onSelectionChanged;
+  final int index;
 
-  TagWidget(this._label, this._initialState, this._onSelectionChanged, {Key key}) : super(key: key);
+  TagWidget(this.label, this._getState, this._onSelectionChanged, this.index, {Key key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _TagWidgetState(this._initialState);
+  State<StatefulWidget> createState() => _TagWidgetState();
 
 }
 
 class _TagWidgetState extends State<TagWidget> {
 
-  bool _state;
-
-  _TagWidgetState(this._state);
-
   @override
   Widget build(BuildContext context) {
     return ChoiceChip(
-      selected: _state,
+      selected: widget._getState(widget.index),
       onSelected: (newSelectionState) {
         setState(() {
-          _state = !_state;
+          widget._onSelectionChanged(!widget._getState(widget.index), widget.index);
         });
-        widget._onSelectionChanged(_state, widget._label);
-
       },
-      label: Text(widget._label),
-      avatar: _getAvatar(_state),
+      label: Text(widget.label),
+      avatar: _getAvatar(widget._getState(widget.index)),
     );
   }
   
