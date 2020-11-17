@@ -30,7 +30,7 @@ class ErrorPage extends StatelessWidget {
             SizedBox(height: 10,),
             RaisedButton(
               child: Text("Riavvia app"),
-              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil("/", (route) => false),
+              onPressed: () => Navigator.of(context).pushReplacementNamed("/")
             )
           ],
         ),
