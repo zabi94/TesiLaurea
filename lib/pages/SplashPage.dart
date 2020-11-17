@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tesi_simone_zanin_140833/Reference.dart';
 
 class SplashPage extends StatefulWidget {
 
@@ -15,7 +17,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _checkPerms();
+    _checkPreconditions();
   }
 
   @override
@@ -37,15 +39,19 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 
-  _checkPerms() async {
+  _checkPreconditions() async {
     PermissionStatus _cameraStatus = await Permission.camera.status;
     PermissionStatus _locationStatus = await Permission.location.status;
 
-    if (_cameraStatus == PermissionStatus.granted && _locationStatus == PermissionStatus.granted) {
-      Navigator.pushReplacementNamed(context, "/home");
-    } else {
+    if (_cameraStatus != PermissionStatus.granted || _locationStatus != PermissionStatus.granted) {
       Navigator.pushReplacementNamed(context, "/permissions",);
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      if (!prefs.containsKey(Reference.prefs_server) || prefs.getString(Reference.prefs_server).isEmpty) {
+        Navigator.pushReplacementNamed(context, "/firstConfiguration",);
+      } else {
+        Navigator.pushReplacementNamed(context, "/home", arguments: "${prefs.getString(Reference.prefs_server)}:${prefs.getInt(Reference.prefs_port)}");
+      }
     }
-
   }
 }

@@ -97,7 +97,7 @@ class _PermissionCheckState extends State<PermissionCheck> {
         ],
       ),
       onPressed: () {
-        Navigator.of(context).pushReplacementNamed("/home");
+        Navigator.of(context).pushReplacementNamed("/");
       },
     );
   }

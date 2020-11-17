@@ -3,6 +3,11 @@ import 'package:image_picker/image_picker.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
+
+  final String server;
+
+  Homepage(this.server, {Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _HomepageState();
 }
@@ -17,7 +22,24 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(Reference.appTitle),
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(Reference.appTitle),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(widget.server, textScaleFactor: 0.75, style: Theme.of(context).textTheme.subtitle1,),
+              ],
+            )
+          ],
+        ),
+
       ),
       body: Center(
         child: _showSpinner()
