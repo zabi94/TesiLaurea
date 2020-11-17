@@ -17,15 +17,31 @@ class InfoPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Icon(Icons.label, size: 170, color: Colors.orange,),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/images/uniud.png', height: 130, width: 130,),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Icon(Icons.label, size: 170, color: Colors.orange,),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('assets/images/uniud.png', height: 130, width: 130,),
+                          ),
+                        ],
                       ),
-                    ],
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Dedica"),
+                              content: Text("A chi mi ha dato la forza di andare avanti."),
+                            );
+                          }
+                        );
+                      },
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
