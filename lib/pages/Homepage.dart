@@ -26,6 +26,64 @@ class _HomepageState extends State<Homepage> {
         child: Icon(Icons.add),
         onPressed: _takePicture,
       ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.orange,
+                    Colors.orangeAccent
+                  ]
+                )
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(Icons.label, size: 80,),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Image Tagger", style: TextStyle(
+                        fontSize: 20.0
+                      )
+                    ),
+                  )
+                ],
+              )
+            ),
+            InkWell(
+              child: ListTile(
+                title: Text("Homepage"),
+                leading: Icon(Icons.home),
+                trailing: Icon(Icons.arrow_right),
+              ),
+              onTap: () => {},
+              splashColor: Colors.orange,
+            ),
+            Divider(),
+            InkWell(
+              child: ListTile(
+                title: Text("Impostazioni"),
+                leading: Icon(Icons.settings),
+                trailing: Icon(Icons.arrow_right),
+              ),
+              onTap: () => {},
+              splashColor: Colors.orange,
+            ),
+            Divider(),
+            InkWell(
+              child: ListTile(
+                title: Text("Informazioni"),
+                leading: Icon(Icons.info_outline),
+                trailing: Icon(Icons.arrow_right),
+              ),
+              onTap: () => {Navigator.of(context).pushNamed("/info")},
+              splashColor: Colors.orange,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
