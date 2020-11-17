@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tesi_simone_zanin_140833/Homepage.dart';
-import 'package:tesi_simone_zanin_140833/PermissionCheck.dart';
-import 'package:tesi_simone_zanin_140833/SplashPage.dart';
-import 'package:tesi_simone_zanin_140833/TakePicturePage.dart';
+import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
+import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
+import 'package:tesi_simone_zanin_140833/pages/SplashPage.dart';
+import 'package:tesi_simone_zanin_140833/pages/TakePicturePage.dart';
 
-import './ErrorPage.dart';
+import 'pages/ErrorPage.dart';
 
 void main() {
   runApp(AppContainer());

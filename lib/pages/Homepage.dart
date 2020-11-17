@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import './Reference.dart';
+import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class _HomepageState extends State<Homepage> {
 
   bool _loading = false;
   bool _empty = true;
+  bool _gettingImage = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,17 @@ class _HomepageState extends State<Homepage> {
       );
     }
 
+    if (_gettingImage) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 20,),
+          Text("Acquisiszione foto")
+        ],
+      );
+    }
+
     if (_empty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -61,7 +73,13 @@ class _HomepageState extends State<Homepage> {
 
   _takePicture() async {
     ImagePicker picker = ImagePicker();
+    setState(() {
+      _gettingImage = true;
+    });
     PickedFile file = await picker.getImage(source: ImageSource.camera);
+    setState(() {
+      _gettingImage = false;
+    });
     if (file != null) {
       Navigator.pushNamed(context, "/addPicture", arguments: file);
     }

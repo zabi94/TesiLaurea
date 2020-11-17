@@ -26,7 +26,7 @@ class _TagWidgetState extends State<TagWidget> {
         });
       },
       label: Text(widget.label),
-      avatar: _getAvatar(widget._getState(widget.index)),
+      //avatar: _getAvatar(widget._getState(widget.index)),
     );
   }
   
