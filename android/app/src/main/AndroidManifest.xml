@@ -2,9 +2,12 @@
     package="zabi.flutter.tesi_simone_zanin_140833">
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <application
+        android:name=".CustomNativeApp"
         android:label="Image Tagger"
         android:icon="@mipmap/ic_launcher">
+        <service android:name=".UploaderService" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

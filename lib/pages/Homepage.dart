@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tesi_simone_zanin_140833/native/UploaderService.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
@@ -90,7 +91,9 @@ class _HomepageState extends State<Homepage> {
                 leading: Icon(Icons.settings),
                 trailing: Icon(Icons.arrow_right),
               ),
-              onTap: () => {},
+              onTap: () => {
+                UploaderService.getInstance().start()
+              },
               splashColor: Colors.orange,
             ),
             Divider(),

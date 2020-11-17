@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
+import 'package:tesi_simone_zanin_140833/native/UploaderService.dart';
 
 class TakePicturePage extends StatefulWidget {
 
@@ -61,6 +62,7 @@ class _TakePictureState extends State<TakePicturePage> {
                   .forEach((e) {
                     print(e);
                   });
+              UploaderService.getInstance().start();
             },
           ),
           SizedBox(height: 20)
