@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
+import 'package:tesi_simone_zanin_140833/native/UploadJob.dart';
 import 'package:tesi_simone_zanin_140833/native/UploaderService.dart';
 
 class TakePicturePage extends StatefulWidget {
@@ -55,14 +57,15 @@ class _TakePictureState extends State<TakePicturePage> {
           SizedBox(height: 20,),
           OutlineButton(
             child: Text("Conferma e carica"),
-            onPressed: () {
+            onPressed: () async {
               print("Tag abilitati:");
-              tags.where((e) => states[e.index])
+              var tagList = tags.where((e) => states[e.index])
                   .map((e) => e.label)
-                  .forEach((e) {
-                    print(e);
-                  });
-              UploaderService.getInstance().start();
+                  .toList();
+              //TODO set state to loader
+              List<int> bytes = await _file.readAsBytes();
+              String imgBase64 = base64Encode(bytes);
+              UploaderService.getInstance().sendJob(UploadJob(imgBase64, tagList, "description string", 0.2, 2.1));
             },
           ),
           SizedBox(height: 20)

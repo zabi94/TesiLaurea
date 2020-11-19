@@ -1,7 +1,5 @@
 package zabi.flutter.tesi_simone_zanin_140833;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;

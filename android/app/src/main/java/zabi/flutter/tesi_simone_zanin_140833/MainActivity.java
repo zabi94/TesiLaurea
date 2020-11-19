@@ -1,11 +1,15 @@
 package zabi.flutter.tesi_simone_zanin_140833;
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.plugin.common.MethodCall;
@@ -19,9 +23,7 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         serviceIntent = new Intent(this, UploaderService.class);
-
         MethodChannel channel = new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "zabi.flutter.tesi_simone_zanin_140833/uploader");
-
         channel.setMethodCallHandler(new MethodChannel.MethodCallHandler() {
             @Override
             public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
@@ -32,6 +34,7 @@ public class MainActivity extends FlutterActivity {
                         break;
                     case "stop":
                     case "add":
+                        result.success(call.arguments.toString());
                     case "get":
                         result.error("NOT-IMPLEMENTED", "not implemented", null);
                         break;

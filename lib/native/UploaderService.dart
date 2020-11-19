@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:tesi_simone_zanin_140833/native/UploadJob.dart';
 
 abstract class UploaderService {
 
@@ -13,7 +14,7 @@ abstract class UploaderService {
 
   void start();
   void stop();
-  void sendJob();
+  void sendJob(UploadJob job);
   void getJobs();
 
 }
@@ -29,7 +30,9 @@ class AndroidUploaderService extends UploaderService {
   }
 
   @override
-  void sendJob() {
+  void sendJob(UploadJob job) async {
+    String s = await channel.invokeMethod("add", job.getAsJson());
+    s.split(",").forEach((element) => print(element));
   }
 
   @override
@@ -51,7 +54,7 @@ class OtherUploaderService extends UploaderService {
   }
 
   @override
-  void sendJob() {
+  void sendJob(UploadJob job) {
   }
 
   @override
