@@ -91,9 +91,7 @@ class _HomepageState extends State<Homepage> {
                 leading: Icon(Icons.settings),
                 trailing: Icon(Icons.arrow_right),
               ),
-              onTap: () => {
-                UploaderService.getInstance().start()
-              },
+              onTap: () => {},
               splashColor: Colors.orange,
             ),
             Divider(),

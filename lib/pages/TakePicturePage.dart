@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
 import 'package:tesi_simone_zanin_140833/native/UploadJob.dart';
@@ -58,14 +59,18 @@ class _TakePictureState extends State<TakePicturePage> {
           OutlineButton(
             child: Text("Conferma e carica"),
             onPressed: () async {
-              print("Tag abilitati:");
               var tagList = tags.where((e) => states[e.index])
                   .map((e) => e.label)
                   .toList();
-              //TODO set state to loader
-              List<int> bytes = await _file.readAsBytes();
-              String imgBase64 = base64Encode(bytes);
-              UploaderService.getInstance().sendJob(UploadJob(imgBase64, tagList, "description string", 0.2, 2.1));
+              //TODO set state to show spinner while this happens
+              Directory appSuppDir = await getApplicationSupportDirectory();
+              int incrementalId = 0; //TODO uniquely identify pictures. By datetime maybe? From database index?
+              String destination = join(appSuppDir.path, "pending", "$incrementalId");
+              Directory destDir = new Directory(destination);
+              destDir.createSync(recursive: true);
+              File photoFile = File(_file.path);
+              File copiedFile = photoFile.copySync("$destination/image.png");
+              UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
             },
           ),
           SizedBox(height: 20)
@@ -101,6 +106,10 @@ class _TakePictureState extends State<TakePicturePage> {
   bool getTagState(int index) {
     if (index >= states.length) return false;
     return states[index];
+  }
+
+  int getUploadId() {
+    return 0; //TODO
   }
 
 }

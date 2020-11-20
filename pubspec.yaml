@@ -23,9 +23,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  permission_handler:
-  image_picker:
-  shared_preferences:
+  permission_handler: #Used to grant location/camera/storage access
+  image_picker: #Used to invoke the system camera to acquire a picture
+  shared_preferences: #Used to save config data
+  path_provider: #Used to get common storage directories
+  path: #Used to manipulate file and directories
+  http: #Used to contact http servers
+  sqflite: #Used to provide db capabilities
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0

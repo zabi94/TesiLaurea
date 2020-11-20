@@ -7,6 +7,7 @@ abstract class UploaderService {
 
   static UploaderService getInstance() {
     if (Platform.isAndroid) {
+      return OtherUploaderService.INSTANCE; //TODO temporarily disable android native code
       return AndroidUploaderService.INSTANCE;
     }
     return OtherUploaderService.INSTANCE;
@@ -47,6 +48,7 @@ class AndroidUploaderService extends UploaderService {
 }
 
 class OtherUploaderService extends UploaderService {
+  // ignore: non_constant_identifier_names
   static final UploaderService INSTANCE = new OtherUploaderService();
 
   @override
@@ -55,6 +57,8 @@ class OtherUploaderService extends UploaderService {
 
   @override
   void sendJob(UploadJob job) {
+    print("STUB: sendJob");
+    print(job.getAsJson());
   }
 
   @override
