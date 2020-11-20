@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
@@ -56,6 +57,8 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
             return MaterialPageRoute(builder: (context) => InfoPage());
           case '/firstConfiguration':
             return MaterialPageRoute(builder: (context) => ServerConfigPage());
+          case '/gallery':
+            return MaterialPageRoute(builder: (context) => GalleryPage());
           case '/addPicture':
             if (settings.arguments is PickedFile) {
               return MaterialPageRoute(builder: (context) => TakePicturePage(settings.arguments));

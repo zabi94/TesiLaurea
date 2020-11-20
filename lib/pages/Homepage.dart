@@ -77,11 +77,11 @@ class _HomepageState extends State<Homepage> {
             ),
             InkWell(
               child: ListTile(
-                title: Text("Homepage"),
-                leading: Icon(Icons.home),
+                title: Text("Storico immagini"),
+                leading: Icon(Icons.history),
                 trailing: Icon(Icons.arrow_right),
               ),
-              onTap: () => {},
+              onTap: () => Navigator.of(context).pushNamed("/gallery"),
               splashColor: Colors.orange,
             ),
             Divider(),
@@ -101,7 +101,7 @@ class _HomepageState extends State<Homepage> {
                 leading: Icon(Icons.info_outline),
                 trailing: Icon(Icons.arrow_right),
               ),
-              onTap: () => {Navigator.of(context).pushNamed("/info")},
+              onTap: () => Navigator.of(context).pushNamed("/info"),
               splashColor: Colors.orange,
             ),
           ],
