@@ -12,8 +12,9 @@ import 'package:tesi_simone_zanin_140833/pages/TakePicturePage.dart';
 import 'pages/ErrorPage.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PersistentData.init();
   runApp(AppContainer());
-  PersistentData.init();
 }
 
 class AppContainer extends StatelessWidget with WidgetsBindingObserver {

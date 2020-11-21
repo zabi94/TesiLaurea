@@ -70,9 +70,28 @@ class _GalleryPageState extends State<GalleryPage> {
       future: PersistentData.getCompletedUploads(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           if (snapshot.hasData) {
-            int incrementalId = 0; //TODO uniquely identify pictures. By datetime maybe? From database index?
-            String file = join(snapshot.data.path, "pending", "$incrementalId", "image.png");
-            return Image.file(File(file));
+            String file = snapshot.data[index].getFilePath();
+            return Container(
+              child: InkWell(
+                child: Image.file(File(file)),
+                onTap: () {},
+                splashColor: Colors.orange,
+              ),
+              decoration: BoxDecoration(
+                border: BorderDirectional(
+                  bottom: BorderSide(
+                      width: 1,
+                      color: Colors.black12,
+                      style: BorderStyle.solid
+                  ),
+                  end: BorderSide(
+                      width: 1,
+                      color: Colors.black12,
+                      style: BorderStyle.solid
+                  ),
+                ),
+              ),
+            );
           } else {
             return Center(
                 child: CircularProgressIndicator()

@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
-import 'package:tesi_simone_zanin_140833/native/UploadJob.dart';
-import 'package:tesi_simone_zanin_140833/native/UploaderService.dart';
 
 class TakePicturePage extends StatefulWidget {
 
@@ -64,13 +63,16 @@ class _TakePictureState extends State<TakePicturePage> {
                   .toList();
               //TODO set state to show spinner while this happens
               Directory appSuppDir = await getApplicationSupportDirectory();
-              int incrementalId = 0; //TODO uniquely identify pictures. By datetime maybe? From database index?
-              String destination = join(appSuppDir.path, "pending", "$incrementalId");
+              int currentAmount = await PersistentData.getPictureCount();
+              int incrementalId = currentAmount +  1;
+              String destination = join(appSuppDir.path, "pending");
               Directory destDir = new Directory(destination);
               destDir.createSync(recursive: true);
               File photoFile = File(_file.path);
-              File copiedFile = photoFile.copySync("$destination/image.png");
-              UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
+              File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
+              PersistentData.addPicture(copiedFile.path, "Unimplemented description", tagList, 0.1, 2.3);
+              Navigator.of(context).pop();
+              //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
             },
           ),
           SizedBox(height: 20)

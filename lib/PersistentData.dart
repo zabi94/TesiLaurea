@@ -13,22 +13,26 @@ class PersistentData {
       version: 1,
       singleInstance: true,
       onCreate: (db, version) {
+        print("Creating DB");
         db.execute("CREATE TABLE pictures ("
             "  picture_id INTEGER PRIMARY KEY,"
             "  fileRef TEXT NOT NULL,"
-            "  uploadedTo TEXT"
+            "  uploadedTo TEXT,"
             "  description TEXT,"
             "  tags TEXT NOT NULL,"
             "  latitude REAL NOT NULL,"
             "  longitude REAL NOT NULL"
-            ")"
+            ");"
         );
       },
     );
   }
   
-  static void addPicture(String _file, String description, List<String> tags, double latitude, double longitude) {
+  static void addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
     PictureRecord record = PictureRecord(_file, description, jsonEncode(tags), latitude, longitude);
+    if (_db == null) {
+      await init();
+    }
     _db.insert("pictures", record.toMap());
   }
 
@@ -40,8 +44,11 @@ class PersistentData {
 
   static Future<List<PictureRecord>> getCompletedUploads() async {
     return _db.query("pictures",
-      where: "uploadedTo != ''",
     ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
+  }
+
+  static Future<int> getPictureCount() {
+    return _db.query("pictures", columns: ["COUNT(*) as result"]).then((value) => value[0]['result']);
   }
 
 }
@@ -66,6 +73,10 @@ class PictureRecord {
 
   static PictureRecord fromDb(Map<String, dynamic> map) {
     return PictureRecord(map['fileRef'], map['description'], map['tags'], map['latitude'], map['longitude'], rowid: map['rowid'], uploadedTo: map['uploadedTo']);
+  }
+
+  String getFilePath() {
+    return _filePath;
   }
 
 }
