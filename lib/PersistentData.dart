@@ -75,4 +75,12 @@ class PictureRecord {
     return _filePath;
   }
 
+  String getJsonTags() {
+    return _tagsJson;
+  }
+
+  String getDescription() {
+    return _description;
+  }
+
 }

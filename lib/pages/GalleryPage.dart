@@ -74,7 +74,9 @@ class _GalleryPageState extends State<GalleryPage> {
             return Container(
               child: InkWell(
                 child: Image.file(File(file)),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed("/gallery/showPicture", arguments: snapshot.data[index]);
+                },
                 splashColor: Colors.orange,
               ),
               decoration: BoxDecoration(
