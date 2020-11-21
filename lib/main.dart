@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
@@ -10,8 +11,9 @@ import 'package:tesi_simone_zanin_140833/pages/TakePicturePage.dart';
 
 import 'pages/ErrorPage.dart';
 
-void main() {
+void main() async {
   runApp(AppContainer());
+  PersistentData.init();
 }
 
 class AppContainer extends StatelessWidget with WidgetsBindingObserver {
