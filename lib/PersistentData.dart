@@ -47,10 +47,6 @@ class PersistentData {
     ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
-  static Future<int> getPictureCount() {
-    return _db.query("pictures", columns: ["COUNT(*) as result"]).then((value) => value[0]['result']);
-  }
-
 }
 
 class PictureRecord {

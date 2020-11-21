@@ -63,8 +63,6 @@ class _TakePictureState extends State<TakePicturePage> {
                   .toList();
               //TODO set state to show spinner while this happens
               Directory appSuppDir = await getApplicationSupportDirectory();
-              int currentAmount = await PersistentData.getPictureCount();
-              int incrementalId = currentAmount +  1;
               String destination = join(appSuppDir.path, "pending");
               Directory destDir = new Directory(destination);
               destDir.createSync(recursive: true);
