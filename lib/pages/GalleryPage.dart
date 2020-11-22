@@ -66,6 +66,7 @@ class _GalleryPageState extends State<GalleryPage> {
   }
 
   Widget _buildGrid(BuildContext ctx, int index, List<PictureRecord> data) {
+    _GalleryPageState widgetHandle = this;
     return FutureBuilder(
       future: PersistentData.getCompletedUploads(),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -75,7 +76,15 @@ class _GalleryPageState extends State<GalleryPage> {
               child: InkWell(
                 child: Image.file(File(file)),
                 onTap: () {
-                  Navigator.of(context).pushNamed("/gallery/showPicture", arguments: snapshot.data[index]);
+                  Navigator.of(context)
+                      .pushNamed("/gallery/showPicture", arguments: snapshot.data[index])
+                      .then((needsRefreshing) => {
+                        if (needsRefreshing != null && needsRefreshing) {
+                          widgetHandle.setState(() {
+                            //NO-OP, serve un refresh
+                          })
+                        }
+                      });
                 },
                 splashColor: Colors.orange,
               ),

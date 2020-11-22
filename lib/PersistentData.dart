@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -45,6 +46,20 @@ class PersistentData {
   static Future<List<PictureRecord>> getCompletedUploads() async {
     return _db.query("pictures",
     ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
+  }
+
+  static void deletePicture(String file) {
+    File f = File(file);
+    f.delete().then((value) {
+      _db.delete("pictures",
+          where: "fileRef = ?",
+          whereArgs: [file]
+      ).then((rows) {
+        if (rows != 1) {
+          throw "Tried to delete one file, but $rows rows were removed from the db";
+        }
+      });
+    });
   }
 
 }

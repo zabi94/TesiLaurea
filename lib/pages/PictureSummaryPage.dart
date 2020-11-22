@@ -20,45 +20,85 @@ class PictureSummaryPage extends StatelessWidget {
         title: Text(Reference.appTitle),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (ctx) {
+                  return AlertDialog(
+                    title: Text("Sei sicuro di voler eliminare la foto?"),
+                    content: Text("Non verrà rimossa dal server su cui è stata caricata."),
+                    actions: [
+                      FlatButton(
+                        child: Text("ANNULLA"),
+                        onPressed: () => Navigator.of(ctx).pop(),
+                      ),
+                      FlatButton(
+                        child: Text("CONFERMA ELIMINAZIONE"),
+                        onPressed: () {
+                          Navigator.of(ctx).pop();
+                          PersistentData.deletePicture(record.getFilePath());
+                          Navigator.of(ctx).pop(true);
+                        },
+                      )
+                    ],
+                  );
+                }
+              );
+            },
             icon: Icon(Icons.delete_forever),
           ),
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.fullscreen),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.drive_file_move),
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.drive_file_move),
-        onPressed: () {},
-      ),
       body: Column(
         children: [
-          Image.file(File(record.getFilePath())),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Wrap(
-                  direction: Axis.horizontal,
-                  alignment: WrapAlignment.start,
-                  children: _mapStringsToWidgets(tags),
-                  spacing: 5.0,
+          SizedBox(height: 8,),
+          Flexible(
+            flex: 6,
+            child: Center(
+                child: Image.file(File(record.getFilePath()))
+            )
+          ),
+          Expanded(
+            flex: 2,
+            child: Card(
+              elevation: 8,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          alignment: WrapAlignment.start,
+                          children: _mapStringsToWidgets(tags),
+                          spacing: 5.0,
+                        )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Align(
+                            child: Text(record.getDescription()),
+                            alignment: Alignment.centerLeft,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(record.getDescription(),textAlign: TextAlign.left,),
-              ],
-            ),
-          ),
+          )
         ],
       ),
     );
