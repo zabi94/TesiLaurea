@@ -21,80 +21,40 @@ class TakePicturePage extends StatefulWidget {
 
 class _TakePictureState extends State<TakePicturePage> {
 
+  TextEditingController controller = TextEditingController();
+
   PickedFile _file;
   List<TagWidget> tags = [];
   List<bool> states = [];
 
-  _TakePictureState(this._file);
+  _TakePictureState(this._file) {
+    var example = ["Specie invasiva", "Secca", "Scoglio", "Olio", "Perdita", "Naufragio", "Relitto", "Pericolo", "Specie protetta"];
+    tags = List.generate(example.length, (index) => TagWidget(example[index], getTagState, onTagSelectionChanged, index));
+    states = List.generate(tags.length, (index) => false);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(Reference.appTitle),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.file(
-                    File(_file.path)
-                ),
-              )
-          ),
-          SizedBox(height: 10,),
-          Container(
-            height: 30,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return _getTags(context, index);
-              },
-            ),
-          ),
-          SizedBox(height: 20,),
-          OutlineButton(
-            child: Text("Conferma e carica"),
-            onPressed: () async {
-              var tagList = tags.where((e) => states[e.index])
-                  .map((e) => e.label)
-                  .toList();
-              //TODO set state to show spinner while this happens
-              Directory appSuppDir = await getApplicationSupportDirectory();
-              String destination = join(appSuppDir.path, "pending");
-              Directory destDir = new Directory(destination);
-              destDir.createSync(recursive: true);
-              File photoFile = File(_file.path);
-              File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
-              PersistentData.addPicture(copiedFile.path, "Unimplemented description", tagList, 0.1, 2.3);
-              Navigator.of(context).pop();
-              //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
-            },
-          ),
-          SizedBox(height: 20)
+        actions: [
+          IconButton(
+            icon: Icon(Icons.check),
+            onPressed: () => startUpload(context),
+          )
         ],
       ),
+      body: SingleChildScrollView(
+        reverse: true,
+        child: Padding(
+          padding: EdgeInsets.only(bottom: keyboardSpace),
+          child: _getPageBody(context),
+        ),
+      ),
     );
-  }
-
-  Widget _getTags(BuildContext context, int index) {
-
-    if (index.isEven) {
-      return SizedBox(width: 5,);
-    }
-
-    if (index > 31) return null;
-
-    int tagIndex = 1 + (index ~/ 2);
-
-    while (tags.length <= tagIndex) {
-      states.add(false);
-      tags.add(new TagWidget("Tag ${tags.length}", getTagState, onTagSelectionChanged, tags.length));
-    }
-
-    return tags[tagIndex];
   }
 
   void onTagSelectionChanged(bool state, int index) {
@@ -108,8 +68,66 @@ class _TakePictureState extends State<TakePicturePage> {
     return states[index];
   }
 
-  int getUploadId() {
-    return 0; //TODO
+  void startUpload(context) async {
+    var tagList = tags.where((e) => states[e.index])
+        .map((e) => e.label)
+        .toList();
+    //TODO set state to show spinner while this happens
+    Directory appSuppDir = await getApplicationSupportDirectory();
+    String destination = join(appSuppDir.path, "pending");
+    Directory destDir = new Directory(destination);
+    destDir.createSync(recursive: true);
+    File photoFile = File(_file.path);
+    File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
+    PersistentData.addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
+    Navigator.of(context).pop();
+    //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
   }
 
+  Widget _getPageBody(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.file(File(_file.path)),
+                  )
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Wrap(
+                          spacing: 2,
+                          children: tags,
+                          alignment: WrapAlignment.spaceEvenly,
+                        ),
+                      ),
+                    ),
+                  )
+                ),
+              ],
+            ),
+          ),
+          TextField(
+            decoration: InputDecoration(
+                hintText: "Descrizione",
+              border: OutlineInputBorder()
+            ),
+            controller: controller,
+            maxLines: 4,
+          ),
+        ],
+      ),
+    );
+  }
 }
