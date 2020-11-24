@@ -82,12 +82,18 @@ class _GalleryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: InkWell(
-        child: Image.file(File(_record.getFilePath()), filterQuality: FilterQuality.none, isAntiAlias: false, frameBuilder: (ctx, child, frame, immediate) {
-          if (immediate || frame != null) {
-            return child;
-          }
-          return Center(child: CircularProgressIndicator(),);
-        },),
+        child: Image.file(File(_record.getFilePath()),
+          filterQuality: FilterQuality.none,
+          isAntiAlias: false,
+          fit: BoxFit.cover, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+          height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+          width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+          frameBuilder: (ctx, child, frame, immediate) {
+            return AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: _getAnimatedChild(child, frame, immediate),
+            );
+          },),
         onTap: () async {
           Navigator.of(context)
               .pushNamed("/gallery/showPicture", arguments: _record)
@@ -112,6 +118,21 @@ class _GalleryTile extends StatelessWidget {
               style: BorderStyle.solid
           ),
         ),
+      ),
+      height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+      width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+      alignment: Alignment.center, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+    );
+  }
+
+  Widget _getAnimatedChild(Widget child, int frame, bool immediate) {
+    if (immediate || frame != null) {
+      return child;
+    }
+    return Center(
+      child: Icon(
+        Icons.hourglass_empty,
+        size: 30,
       ),
     );
   }
