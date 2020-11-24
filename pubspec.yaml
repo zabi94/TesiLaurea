@@ -30,6 +30,7 @@ dependencies:
   path: #Used to manipulate file and directories
   http: #Used to contact http servers
   sqflite: #Used to provide db capabilities
+  gallery_saver: #Ability to save images to gallery
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0

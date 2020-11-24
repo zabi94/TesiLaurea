@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 
@@ -54,9 +55,24 @@ class PictureSummaryPage extends StatelessWidget {
             },
             icon: Icon(Icons.fullscreen),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.drive_file_move),
+          Builder(
+            builder:(newContext) => IconButton(
+              onPressed: () async {
+                GallerySaver.saveImage(record.getFilePath(), albumName: "ImageTagger").then((value) {
+                  Scaffold.of(newContext).showSnackBar(SnackBar(
+                    duration: Duration(seconds: 3),
+                    content: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(value?"File copiato nella galleria":"Non copiato, errore sconosciuto"),
+                        Icon(value?Icons.check:Icons.error),
+                      ],
+                    ),
+                  ));
+                });
+              },
+              icon: Icon(Icons.drive_file_move),
+            ),
           )
         ],
       ),
