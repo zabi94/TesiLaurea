@@ -63,7 +63,12 @@ class PictureSummaryPage extends StatelessWidget {
           Flexible(
             flex: 6,
             child: Center(
-                child: Image.file(File(record.getFilePath()))
+                child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
+                  if (imm || frame != null) {
+                    return child;
+                  }
+                  return CircularProgressIndicator();
+                },)
             )
           ),
           Expanded(
