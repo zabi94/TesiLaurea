@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
+import 'package:tesi_simone_zanin_140833/pages/FullscreenImagePage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
@@ -68,6 +69,11 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture expects a PictureRecord"));
             }
             return MaterialPageRoute(builder: (context) => PictureSummaryPage(settings.arguments));
+          case '/gallery/showPicture/full':
+            if (!(settings.arguments is String)) {
+              return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture/full expects a String"));
+            }
+            return MaterialPageRoute(builder: (context) => FullscreenImagePage(settings.arguments));
           case '/addPicture':
             if (settings.arguments is PickedFile) {
               return MaterialPageRoute(builder: (context) => TakePicturePage(settings.arguments));

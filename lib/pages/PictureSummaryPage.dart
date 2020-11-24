@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 
@@ -48,7 +49,9 @@ class PictureSummaryPage extends StatelessWidget {
             icon: Icon(Icons.delete_forever),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              await Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
+            },
             icon: Icon(Icons.fullscreen),
           ),
           IconButton(
