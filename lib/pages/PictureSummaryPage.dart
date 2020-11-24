@@ -34,9 +34,9 @@ class PictureSummaryPage extends StatelessWidget {
                       ),
                       FlatButton(
                         child: Text("CONFERMA ELIMINAZIONE"),
-                        onPressed: () {
+                        onPressed: () async {
+                          await PersistentData.deletePicture(record.getFilePath());
                           Navigator.of(ctx).pop();
-                          PersistentData.deletePicture(record.getFilePath());
                           Navigator.of(ctx).pop(true);
                         },
                       )

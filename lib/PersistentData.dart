@@ -48,9 +48,9 @@ class PersistentData {
     ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
-  static void deletePicture(String file) {
+  static Future<Null> deletePicture(String file) {
     File f = File(file);
-    f.delete().then((value) {
+    return f.delete().then((value) {
       _db.delete("pictures",
           where: "fileRef = ?",
           whereArgs: [file]
