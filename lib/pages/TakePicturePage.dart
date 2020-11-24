@@ -97,7 +97,12 @@ class _TakePictureState extends State<TakePicturePage> {
                   flex: 1,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.file(File(_file.path)),
+                    child: Image.file(File(_file.path), frameBuilder: (ctx, child, frame, asynchronous) {
+                      if (asynchronous || frame != null) {
+                        return child;
+                      }
+                      return Center(child: CircularProgressIndicator(),);
+                    },),
                   )
                 ),
                 Expanded(
