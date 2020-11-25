@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tesi_simone_zanin_140833/Reference.dart';
 
 class PermissionCheck extends StatefulWidget {
   @override
@@ -45,6 +46,7 @@ class _PermissionCheckState extends State<PermissionCheck> {
                 trailing: _buttonIcon(_locationStatus, _reqLocation),
                 title: Text("Utilizzo della posizione"),
               ),
+              _optAndroidWarning(),
               SizedBox(height: 100,),
               Expanded(
                 child: Row(
@@ -79,9 +81,9 @@ class _PermissionCheckState extends State<PermissionCheck> {
       return OutlineButton(
         child: Row(
           children: [
-            Text("Richiedi autorizzazioni mancanti", style: Theme.of(context).textTheme.bodyText2.apply(color: Colors.red),),
+            Text("Richiedi autorizzazioni mancanti",),
             SizedBox(width: 10,),
-            Icon(Icons.error, color: Colors.red,)
+            Icon(Icons.assignment_turned_in_outlined)
           ],
         ),
         onPressed: _requestAllPermissions,
@@ -137,13 +139,33 @@ class _PermissionCheckState extends State<PermissionCheck> {
       _locationStatus = newstate;
     });
   }
+
   _requestAllPermissions() async {
     var states = await [Permission.location, Permission.camera].request();
-    await _checkPerms(); //Necessario per garantire la corretta lettura dei permessi, essendo una doppia richiesta potrebbe riportarne i valori incorrettamente
     setState(() {
-      _checkPerms();
+      _locationStatus = states[0];
+      _cameraStatus = states[1];
     });
+    await _checkPerms(); //Necessario per garantire la corretta lettura dei permessi, essendo una doppia richiesta potrebbe riportarne i valori incorrettamente
+  }
 
+  _optAndroidWarning() {
+    if (Reference.isAndroid11) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Icon(Icons.warning, size: 40,),
+            SizedBox(width: 16,),
+            Expanded(
+              child: Text("Ad oggi è presente un bug nella libreria Flutter dei permessi per Android 11 e successivi.\n"
+                  "Si prega di non selezionare l'opzione 'Solo questa volta' tra i permessi disponibili", textAlign: TextAlign.center,),
+            ),
+          ],
+        ),
+      );
+    }
+    return SizedBox(height: 0,);
   }
 
 }

@@ -56,23 +56,30 @@ class PictureSummaryPage extends StatelessWidget {
             icon: Icon(Icons.fullscreen),
           ),
           Builder(
-            builder:(newContext) => IconButton(
-              onPressed: () async {
-                GallerySaver.saveImage(record.getFilePath(), albumName: "ImageTagger").then((value) {
-                  Scaffold.of(newContext).showSnackBar(SnackBar(
-                    duration: Duration(seconds: 3),
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(value?"File copiato nella galleria":"Non copiato, errore sconosciuto"),
-                        Icon(value?Icons.check:Icons.error),
-                      ],
-                    ),
-                  ));
-                });
-              },
-              icon: Icon(Icons.drive_file_move),
-            ),
+            builder:(newContext) {
+              if (Reference.isAndroid11) return SizedBox(width: 0, height: 0,);
+              return IconButton(
+                onPressed: () async {
+                  GallerySaver.saveImage(
+                      record.getFilePath(), albumName: "ImageTagger").then((
+                      value) {
+                    Scaffold.of(newContext).showSnackBar(SnackBar(
+                      duration: Duration(seconds: 3),
+                      content: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(value
+                              ? "File copiato nella galleria"
+                              : "Non copiato, errore sconosciuto"),
+                          Icon(value ? Icons.check : Icons.error),
+                        ],
+                      ),
+                    ));
+                  });
+                },
+                icon: Icon(Icons.drive_file_move),
+              );
+            }
           )
         ],
       ),

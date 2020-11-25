@@ -8,9 +8,9 @@ class PersistentData {
 
   static Database _db;
 
-  static void init() async {
+  static Future<Null> init() async {
     String dbFilePath = join(await getDatabasesPath(), "imagetagger_galleryData.db");
-    _db = await openDatabase(dbFilePath,
+    return openDatabase(dbFilePath,
       version: 1,
       singleInstance: true,
       onCreate: (db, version) {
@@ -26,7 +26,7 @@ class PersistentData {
             ");"
         );
       },
-    );
+    ).then((value) {_db = value;});
   }
   
   static void addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
