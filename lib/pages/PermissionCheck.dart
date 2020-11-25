@@ -71,7 +71,7 @@ class _PermissionCheckState extends State<PermissionCheck> {
   _onInitDo() async {
     await _checkPerms();
     if (_cameraStatus.isGranted && _locationStatus.isGranted) {
-      Navigator.of(context).pushReplacementNamed("/gallery");
+      Navigator.of(context).pushReplacementNamed("/home");
     }
   }
 

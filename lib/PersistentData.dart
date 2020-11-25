@@ -29,12 +29,12 @@ class PersistentData {
     ).then((value) {_db = value;});
   }
   
-  static Future<Null> addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
+  static void addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
     PictureRecord record = PictureRecord(_file, description, jsonEncode(tags), latitude, longitude);
     if (_db == null) {
       await init();
     }
-    return _db.insert("pictures", record.toMap()).then((value) {});
+    _db.insert("pictures", record.toMap());
   }
 
   static Future<List<PictureRecord>> getPendingUploads() async {

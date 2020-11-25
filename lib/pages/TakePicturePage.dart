@@ -68,7 +68,7 @@ class _TakePictureState extends State<TakePicturePage> {
     return states[index];
   }
 
-   void startUpload(context) async {
+  void startUpload(context) async {
     var tagList = tags.where((e) => states[e.index])
         .map((e) => e.label)
         .toList();
@@ -79,8 +79,8 @@ class _TakePictureState extends State<TakePicturePage> {
     destDir.createSync(recursive: true);
     File photoFile = File(_file.path);
     File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
-    await PersistentData.addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
-    Navigator.of(context).pop(true);
+    PersistentData.addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
+    Navigator.of(context).pop();
     //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
   }
 

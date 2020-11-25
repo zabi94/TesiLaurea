@@ -95,7 +95,6 @@ class _ServerConfigState extends State<ServerConfigPage> {
             )
           ],
         ),
-        Text("Questa pagina non è ancora funzionale. I dati immessi saranno ignorati, è possibile continuare senza cambiare il contenuto", textAlign: TextAlign.center,),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: OutlineButton(
