@@ -4,7 +4,6 @@ import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/pages/FullscreenImagePage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
-import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
 import 'package:tesi_simone_zanin_140833/pages/PictureSummaryPage.dart';
@@ -54,16 +53,13 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
             return MaterialPageRoute(builder: (context) => SplashPage());
           case '/permissions':
             return MaterialPageRoute(builder: (context) => PermissionCheck());
-          case '/home':
-            if (!(settings.arguments is String)) {
-              return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/home expects the server name"));
-            }
-            String args = settings.arguments;
-            return MaterialPageRoute(builder: (context) => Homepage(args));
           case '/info':
             return MaterialPageRoute(builder: (context) => InfoPage());
           case '/firstConfiguration':
             return MaterialPageRoute(builder: (context) => ServerConfigPage());
+          case '/home': //Legacy, non dovrebbe essere più usato nel codice, sostituito da /gallery
+            print("Route /home è deprecata");
+            return MaterialPageRoute(builder: (context) => GalleryPage());
           case '/gallery':
             return MaterialPageRoute(builder: (context) => GalleryPage());
           case '/gallery/showPicture':

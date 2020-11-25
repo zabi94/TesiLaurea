@@ -5,6 +5,8 @@ import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 
 class GalleryGrid extends StatefulWidget {
 
+  GalleryGrid({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => _GalleryState();
 
@@ -26,7 +28,7 @@ class _GalleryState extends State<GalleryGrid> {
     });
     await PersistentData.getCompletedUploads().then((pics) {
       setState(() {
-        images = pics;
+        images = pics.reversed.toList();
       });
     });
   }
@@ -62,6 +64,8 @@ class _GalleryState extends State<GalleryGrid> {
     return GridView.builder(
       itemBuilder: (ctx, id) => _GalleryTile(images[id], reloadPictures, key: GlobalKey()),
       itemCount: images.length,
+      addAutomaticKeepAlives: true,
+      cacheExtent: 400,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         childAspectRatio: 1,
         crossAxisCount: 3,
@@ -71,7 +75,7 @@ class _GalleryState extends State<GalleryGrid> {
   }
 }
 
-class _GalleryTile extends StatelessWidget {
+class _GalleryTile extends StatefulWidget {
 
   final PictureRecord _record;
   final Function _refreshSignaler;
@@ -79,27 +83,51 @@ class _GalleryTile extends StatelessWidget {
   _GalleryTile(this._record, this._refreshSignaler, {Key key}) : super(key: key);
 
   @override
+  State<StatefulWidget> createState() => _GalleryTileState();
+
+}
+
+class _GalleryTileState extends State<_GalleryTile> with AutomaticKeepAliveClientMixin<_GalleryTile> {
+
+  Image img;
+
+  @override
+  void initState() {
+    super.initState();
+    img = Image.file(File(widget._record.getFilePath()),
+      filterQuality: FilterQuality.none,
+      isAntiAlias: false,
+      fit: BoxFit.cover, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+      height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+      width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+      frameBuilder: (ctx, child, frame, immediate) {
+        return AnimatedSwitcher(
+          duration: Duration(milliseconds: 300),
+          child: _getAnimatedChild(child, frame, immediate),
+        );
+      },
+      key: ValueKey("image_it_${widget._record.getFilePath()}"),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    precacheImage(img.image, context);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       child: InkWell(
-        child: Image.file(File(_record.getFilePath()),
-          filterQuality: FilterQuality.none,
-          isAntiAlias: false,
-          fit: BoxFit.cover, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
-          height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
-          width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
-          frameBuilder: (ctx, child, frame, immediate) {
-            return AnimatedSwitcher(
-              duration: Duration(milliseconds: 300),
-              child: _getAnimatedChild(child, frame, immediate),
-            );
-          },),
+        child: img,
         onTap: () async {
           Navigator.of(context)
-              .pushNamed("/gallery/showPicture", arguments: _record)
+              .pushNamed("/gallery/showPicture", arguments: widget._record)
               .then((needsRefreshing) {
             if (needsRefreshing != null && needsRefreshing) {
-              _refreshSignaler();
+              widget._refreshSignaler();
             }
           });
         },
@@ -136,5 +164,9 @@ class _GalleryTile extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
+
 }
 
