@@ -3,9 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/pages/FullscreenImagePage.dart';
-import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
-import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
 import 'package:tesi_simone_zanin_140833/pages/PictureSummaryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/ServerConfigPage.dart';
@@ -60,12 +58,8 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
             }
             String args = settings.arguments;
             return MaterialPageRoute(builder: (context) => Homepage(args));
-          case '/info':
-            return MaterialPageRoute(builder: (context) => InfoPage());
           case '/firstConfiguration':
             return MaterialPageRoute(builder: (context) => ServerConfigPage());
-          case '/gallery':
-            return MaterialPageRoute(builder: (context) => GalleryPage());
           case '/gallery/showPicture':
             if (!(settings.arguments is PictureRecord)) {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture expects a PictureRecord"));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tesi_simone_zanin_140833/native/UploaderService.dart';
+import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
+import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
@@ -15,35 +16,24 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
 
-  bool _loading = false;
-  bool _empty = true;
-  bool _gettingImage = false;
+  PageController _controller = new PageController(
+      initialPage: 0,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(Reference.appTitle),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(widget.server, textScaleFactor: 0.75, style: Theme.of(context).textTheme.subtitle1,),
-              ],
-            )
-          ],
-        ),
+        title: Text(Reference.appTitle),
 
       ),
-      body: Center(
-        child: _showSpinner()
+      body: PageView(
+        controller: _controller,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          GalleryPage(),
+          InfoPage()
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
@@ -65,34 +55,23 @@ class _HomepageState extends State<Homepage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.label, size: 80,),
+                  Icon(Icons.label, size: 50,),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Image Tagger", style: TextStyle(
-                        fontSize: 20.0
-                      )
-                    ),
+                    child: Text("[[Info server qui]]"),
                   )
                 ],
               )
             ),
             InkWell(
               child: ListTile(
-                title: Text("Storico immagini"),
-                leading: Icon(Icons.history),
-                trailing: Icon(Icons.arrow_right),
+                title: Text("Galleria"),
+                leading: Icon(Icons.image),
               ),
-              onTap: () => Navigator.of(context).pushNamed("/gallery"),
-              splashColor: Colors.orange,
-            ),
-            Divider(),
-            InkWell(
-              child: ListTile(
-                title: Text("Impostazioni"),
-                leading: Icon(Icons.settings),
-                trailing: Icon(Icons.arrow_right),
-              ),
-              onTap: () => {},
+              onTap: () {
+                _controller.jumpToPage(0);
+                Navigator.of(context).pop();
+              },
               splashColor: Colors.orange,
             ),
             Divider(),
@@ -100,9 +79,11 @@ class _HomepageState extends State<Homepage> {
               child: ListTile(
                 title: Text("Informazioni"),
                 leading: Icon(Icons.info_outline),
-                trailing: Icon(Icons.arrow_right),
               ),
-              onTap: () => Navigator.of(context).pushNamed("/info"),
+              onTap: () {
+                _controller.jumpToPage(1);
+                Navigator.of(context).pop();
+              },
               splashColor: Colors.orange,
             ),
           ],
@@ -111,57 +92,9 @@ class _HomepageState extends State<Homepage> {
     );
   }
 
-  _showSpinner() {
-    if (_loading) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 20,),
-          Text("Caricamento dati")
-        ],
-      );
-    }
-
-    if (_gettingImage) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 20,),
-          Text("Acquisiszione foto")
-        ],
-      );
-    }
-
-    if (_empty) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.all_inbox, size: 80, color: Colors.black38,),
-          SizedBox(height: 20,),
-          Text("Nessun dato presente"),
-          Text("Clicca sul pulsante + per iniziare")
-        ],
-      );
-    }
-
-    return ListView.builder(itemBuilder: (context, index) {
-      return ListTile(
-        title: Text("Hello"),
-      );
-    },);
-  }
-
   _takePicture() async {
     ImagePicker picker = ImagePicker();
-    setState(() {
-      _gettingImage = true;
-    });
     PickedFile file = await picker.getImage(source: ImageSource.camera);
-    setState(() {
-      _gettingImage = false;
-    });
     if (file != null) {
       Navigator.pushNamed(context, "/addPicture", arguments: file);
     }
