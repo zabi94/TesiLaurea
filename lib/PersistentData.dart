@@ -99,4 +99,14 @@ class PictureRecord {
     return _description;
   }
 
+  List<Widget> getChipTags() {
+    var tags = jsonDecode(getJsonTags());
+    var result = <Widget>[];
+    for (int i = 0; i < tags.length; i++) {
+      String s = tags[i].toString();
+      result.add(Chip(label: Text(s)));
+    }
+    return result;
+  }
+
 }

@@ -109,7 +109,7 @@ class PictureSummaryPage extends StatelessWidget {
                         child: Wrap(
                           direction: Axis.horizontal,
                           alignment: WrapAlignment.start,
-                          children: _mapStringsToWidgets(tags),
+                          children: record.getChipTags(),
                           spacing: 5.0,
                         )
                     ),
@@ -134,15 +134,4 @@ class PictureSummaryPage extends StatelessWidget {
       ),
     );
   }
-
-  //Necessaria per la conversione esplicita del dynamic in String
-  List<Widget> _mapStringsToWidgets(List<dynamic> list) {
-    var result = <Widget>[];
-    for (int i = 0; i < list.length; i++) {
-      String s = list[i].toString();
-      result.add(Chip(label: Text(s)));
-    }
-    return result;
-  }
-
 }
