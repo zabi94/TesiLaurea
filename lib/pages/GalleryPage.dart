@@ -23,13 +23,9 @@ class GalleryPage extends StatelessWidget {
   }
 
   Widget _getGridWidget(List<PictureRecord> imageRecords) {
-    return GridView.builder(
-        itemBuilder: (ctx, id) => _GalleryTile(imageRecords[id], key: ValueKey(imageRecords[id].getFilePath()),),
-        itemCount: imageRecords.length,
-        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 170,
-            childAspectRatio: 1
-        )
+    return ListView.builder(
+      itemCount: imageRecords.length,
+      itemBuilder: (ctx, id) => _GalleryTile(imageRecords[id], key: ValueKey(imageRecords[id].getFilePath()),),
     );
   }
 
@@ -74,7 +70,7 @@ class _GalleryTile extends StatefulWidget {
 
 }
 
-class _GalleryTileState extends State<_GalleryTile> with AutomaticKeepAliveClientMixin<_GalleryTile> {
+class _GalleryTileState extends State<_GalleryTile> {
 
   Image _cachedImage;
 
@@ -98,32 +94,55 @@ class _GalleryTileState extends State<_GalleryTile> with AutomaticKeepAliveClien
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    List<Widget> chips = widget._record.getChipTags();
     return Container(
-      child: InkWell(
-        child: _cachedImage,
-        onTap: () async {
-          Navigator.of(context).pushNamed("/gallery/showPicture", arguments: widget._record);
-        },
-        splashColor: Colors.orange,
+      constraints: BoxConstraints(
+          maxHeight: 250
       ),
-      decoration: BoxDecoration(
-        border: BorderDirectional(
-          bottom: BorderSide(
-              width: 1,
-              color: Colors.black12,
-              style: BorderStyle.solid
+
+      child: Card(
+        child: InkWell(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Container(
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: _cachedImage,
+                      ),
+                      constraints: BoxConstraints(
+                          maxHeight: 170
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                    Expanded(
+                      child: _emptyAlternative(widget._record.getDescription(), "Nessuna descrizione"),
+                    )
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.start,
+                ),
+              ),
+              Expanded(
+                  child: chips.isEmpty ? Center(child: Text("Nessun tag", textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyText2.apply(fontStyle: FontStyle.italic, ))) : SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                        children: List.generate(chips.length * 2, (i) {
+                          if (i%2==0) return SizedBox(width: 8,);
+                          return chips[i~/2];
+                        })
+                    ),
+                  )
+              ),
+            ],
           ),
-          end: BorderSide(
-              width: 1,
-              color: Colors.black12,
-              style: BorderStyle.solid
-          ),
+          onTap: () => Navigator.of(context).pushNamed("/gallery/showPicture", arguments: widget._record),
+          splashColor: Colors.orange,
         ),
       ),
-      height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
-      width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
-      alignment: Alignment.center, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
     );
   }
 
@@ -139,7 +158,9 @@ class _GalleryTileState extends State<_GalleryTile> with AutomaticKeepAliveClien
     );
   }
 
-  @override
-  bool get wantKeepAlive => true;
+  Text _emptyAlternative(String string, String or) {
+    if (string.isNotEmpty) return Text(string);
+    return Text(or, style: Theme.of(context).textTheme.bodyText2.apply(fontStyle: FontStyle.italic, ), textAlign: TextAlign.center,);
+  }
 
 }
