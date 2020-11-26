@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
@@ -68,7 +69,7 @@ class _TakePictureState extends State<TakePicturePage> {
     return states[index];
   }
 
-  void startUpload(context) async {
+  void startUpload(BuildContext context) async {
     var tagList = tags.where((e) => states[e.index])
         .map((e) => e.label)
         .toList();
@@ -79,7 +80,7 @@ class _TakePictureState extends State<TakePicturePage> {
     destDir.createSync(recursive: true);
     File photoFile = File(_file.path);
     File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
-    PersistentData.addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
+    context.read<DatabaseInterface>().addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
     Navigator.of(context).pop();
     //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
   }

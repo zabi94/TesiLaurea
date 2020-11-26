@@ -1,65 +1,66 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class PersistentData {
+class DatabaseInterface with ChangeNotifier {
 
-  static Database _db;
+  Future<Database> _db;
+  bool ready = false;
 
-  static Future<Null> init() async {
-    String dbFilePath = join(await getDatabasesPath(), "imagetagger_galleryData.db");
-    return openDatabase(dbFilePath,
-      version: 1,
-      singleInstance: true,
-      onCreate: (db, version) {
-        print("Creating DB");
-        db.execute("CREATE TABLE pictures ("
-            "  picture_id INTEGER PRIMARY KEY,"
-            "  fileRef TEXT NOT NULL,"
-            "  uploadedTo TEXT,"
-            "  description TEXT,"
-            "  tags TEXT NOT NULL,"
-            "  latitude REAL NOT NULL,"
-            "  longitude REAL NOT NULL"
-            ");"
-        );
-      },
-    ).then((value) {_db = value;});
+  DatabaseInterface() {
+    _db = getDatabasesPath()
+        .then((path) => join(path, "imagetagger_galleryData.db"))
+        .then((dbFilePath) => openDatabase(dbFilePath,
+          version: 1,
+          singleInstance: true,
+          onCreate: (db, version) {
+            db.execute("CREATE TABLE pictures ("
+                "  picture_id INTEGER PRIMARY KEY,"
+                "  fileRef TEXT NOT NULL,"
+                "  uploadedTo TEXT,"
+                "  description TEXT,"
+                "  tags TEXT NOT NULL,"
+                "  latitude REAL NOT NULL,"
+                "  longitude REAL NOT NULL"
+                ");"
+            );
+          },
+        ));
   }
-  
-  static void addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
+
+  Future<Null> addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
     PictureRecord record = PictureRecord(_file, description, jsonEncode(tags), latitude, longitude);
-    if (_db == null) {
-      await init();
-    }
-    _db.insert("pictures", record.toMap());
+    return _db.then((db) => db.insert("pictures", record.toMap()))
+        .then((_) {notifyListeners();});
   }
 
-  static Future<List<PictureRecord>> getPendingUploads() async {
-    return _db.query("pictures",
-      where: "uploadedTo == ''",
-    ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
+  Future<List<PictureRecord>> getPendingUploads() async {
+    return _db.then((db) => db.query("pictures", where: "uploadedTo == ''", ))
+        .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
-  static Future<List<PictureRecord>> getCompletedUploads() async {
-    return _db.query("pictures",
-    ).then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
+  Future<List<PictureRecord>> getCompletedUploads() async {
+
+    return _db.then((db) => db.query("pictures", orderBy: "-rowid"))
+        .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
-  static Future<Null> deletePicture(String file) {
+  Future<Null> deletePicture(String file) {
     File f = File(file);
-    return f.delete().then((value) {
-      _db.delete("pictures",
-          where: "fileRef = ?",
-          whereArgs: [file]
-      ).then((rows) {
-        if (rows != 1) {
-          throw "Tried to delete one file, but $rows rows were removed from the db";
-        }
+
+    return f.delete()
+      .then((_) {
+        _db.then((db) => db.delete("pictures", where: "fileRef = ?", whereArgs: [file]))
+        .then((rows) {
+          if (rows != 1) {
+            throw "Tried to delete one file, but $rows rows were removed from the db";
+          }
+          notifyListeners();
+        });
       });
-    });
   }
 
 }

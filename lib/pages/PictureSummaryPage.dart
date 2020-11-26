@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
+import 'package:provider/provider.dart';
 
 class PictureSummaryPage extends StatelessWidget {
 
@@ -37,7 +37,7 @@ class PictureSummaryPage extends StatelessWidget {
                       FlatButton(
                         child: Text("CONFERMA ELIMINAZIONE"),
                         onPressed: () async {
-                          await PersistentData.deletePicture(record.getFilePath());
+                          await context.read<DatabaseInterface>().deletePicture(record.getFilePath());
                           Navigator.of(ctx).pop();
                           Navigator.of(ctx).pop(true);
                         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/pages/FullscreenImagePage.dart';
@@ -14,9 +15,15 @@ import 'pages/ErrorPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await PersistentData.init();
   await Reference.checkPlatform();
-  runApp(AppContainer());
+  runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => DatabaseInterface())
+        ],
+        child: AppContainer(),
+      )
+  );
 }
 
 class AppContainer extends StatelessWidget with WidgetsBindingObserver {
