@@ -52,8 +52,6 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
           args = settings.arguments;
         }
 
-        print("Switching to ${settings.name}");
-
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => SplashPage());
