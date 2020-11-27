@@ -112,7 +112,10 @@ class _GalleryTileState extends State<_GalleryTile> {
                     Container(
                       child: AspectRatio(
                         aspectRatio: 1,
-                        child: _cachedImage,
+                        child: Hero(
+                            tag: widget._record.getFilePath(),
+                            child: _cachedImage
+                        ),
                       ),
                       constraints: BoxConstraints(
                           maxHeight: 170

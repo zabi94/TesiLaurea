@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ class PictureSummaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var tags = jsonDecode(record.getJsonTags());
     return Scaffold(
       appBar: AppBar(
         title: Text(Reference.appTitle),
@@ -82,17 +80,25 @@ class PictureSummaryPage extends StatelessWidget {
           SizedBox(height: 8,),
           Flexible(
             flex: 6,
-            child: Center(
-                child: InkWell(
-                  child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
-                    if (imm || frame != null) {
-                      return child;
+              child: Center(
+                child: GestureDetector(
+                  child: Hero(
+                    child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
+                      if (imm || frame != null) {
+                        return child;
+                      }
+                      return CircularProgressIndicator();
+                    },),
+                    tag: record.getFilePath(),
+                  ),
+                  onScaleUpdate: (details) {
+                    if (details.scale > 2) {
+                      Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
                     }
-                    return CircularProgressIndicator();
-                  },),
+                  },
                   onTap: () => Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom])),
-                )
-            )
+                ),
+              )
           ),
           Expanded(
             flex: 2,

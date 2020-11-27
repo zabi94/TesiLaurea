@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class FullscreenImagePage extends StatelessWidget {
@@ -13,7 +14,12 @@ class FullscreenImagePage extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
     return InteractiveViewer(
-      child: Image.file(File(imageFile)),
+      child: Hero(
+          transitionOnUserGestures: true,
+          tag: imageFile,
+          child: Image.file(File(imageFile))
+      ),
+      maxScale: 8,
     );
   }
 
