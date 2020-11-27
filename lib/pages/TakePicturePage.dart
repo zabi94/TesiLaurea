@@ -29,7 +29,7 @@ class _TakePictureState extends State<TakePicturePage> {
   List<bool> states = [];
 
   _TakePictureState(this._file) {
-    var example = ["Specie invasiva", "Secca", "Scoglio", "Olio", "Perdita", "Naufragio", "Relitto", "Pericolo", "Specie protetta"];
+    var example = ["Segnaletica stradale", "Manto stradale", "Servizi fognari", "Aree verdi", "Servizi urbani", "Pulizia", "Ostacolo", "Barriera architettonica"];
     tags = List.generate(example.length, (index) => TagWidget(example[index], getTagState, onTagSelectionChanged, index));
     states = List.generate(tags.length, (index) => false);
   }

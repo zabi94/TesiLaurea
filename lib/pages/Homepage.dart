@@ -77,6 +77,28 @@ class _HomepageState extends State<Homepage> {
             Divider(),
             InkWell(
               child: ListTile(
+                title: Text("(WIP) Cronologia caricamenti"),
+                leading: Icon(Icons.history),
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed("/history", arguments: "Pagina 'Cronologia' non implementata");
+              },
+              splashColor: Colors.orange,
+            ),
+            Divider(),
+            InkWell(
+              child: ListTile(
+                title: Text("(WIP) Impostazioni"),
+                leading: Icon(Icons.settings),
+              ),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed("/settings", arguments: "Pagina 'Impostazioni' non implementata");
+              },
+              splashColor: Colors.orange,
+            ),
+            Divider(),
+            InkWell(
+              child: ListTile(
                 title: Text("Informazioni"),
                 leading: Icon(Icons.info_outline),
               ),

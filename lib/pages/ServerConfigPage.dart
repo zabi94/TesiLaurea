@@ -92,6 +92,12 @@ class _ServerConfigState extends State<ServerConfigPage> {
                     labelText: 'Inserisci la porta di destinazione'
                 ),
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("Le informazioni in questa pagina sono completamente ignorate in questa versione dell'app, è stata inserita in previsione di una funzione futura. È possibile inserire valori casuali",
+                textAlign: TextAlign.center,
+              ),
             )
           ],
         ),

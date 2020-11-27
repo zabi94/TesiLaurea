@@ -11,7 +11,7 @@ class ErrorPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-              "Error"
+              "Pagina inesistente"
           )
       ),
       body: Center(
