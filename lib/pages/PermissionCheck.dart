@@ -9,8 +9,9 @@ class PermissionCheck extends StatefulWidget {
 
 class _PermissionCheckState extends State<PermissionCheck> {
 
-  PermissionStatus _cameraStatus = PermissionStatus.undetermined;
+  PermissionStatus _storageStatus = PermissionStatus.undetermined;
   PermissionStatus _locationStatus = PermissionStatus.undetermined;
+  PermissionStatus _cameraStatus = PermissionStatus.undetermined;
 
   @override
   void initState() {
@@ -26,29 +27,42 @@ class _PermissionCheckState extends State<PermissionCheck> {
       ),
       body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: SizedBox(height: 10,),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                        "Questa app ha bisogno dei seguenti permessi per funzionare correttamente:",
+                        textScaleFactor: 1.25,
+                        textAlign: TextAlign.center,
+                    ),
+                    Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(Icons.folder_outlined),
+                          trailing: _buttonIcon(_storageStatus, _reqStorage),
+                          title: Text("Accesso alla memoria"),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.gps_fixed),
+                          trailing: _buttonIcon(_locationStatus, _reqLocation),
+                          title: Text("Accesso alla posizione"),
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.camera_alt_outlined),
+                          trailing: _buttonIcon(_cameraStatus, _reqCamera),
+                          title: Text("Accesso alla fotocamera"),
+                        ),
+                      ],
+                    ),
+                    _optAndroidWarning(),
+
+                  ],
+                ),
               ),
-              Text(
-                  "Questa app ha bisogno dei seguenti permessi:",
-                  style: Theme.of(context).textTheme.bodyText2.apply(fontSizeFactor: 1.1)
-              ),
-              SizedBox(height: 50,),
-              ListTile(
-                leading: Icon(Icons.camera),
-                trailing: _buttonIcon(_cameraStatus, _reqCamera),
-                title: Text("Utilizzo della fotocamera"),
-              ),
-              ListTile(
-                leading: Icon(Icons.gps_fixed),
-                trailing: _buttonIcon(_locationStatus, _reqLocation),
-                title: Text("Utilizzo della posizione"),
-              ),
-              _optAndroidWarning(),
-              SizedBox(height: 100,),
-              Expanded(
+              Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -56,28 +70,45 @@ class _PermissionCheckState extends State<PermissionCheck> {
                     SizedBox(width: 10,)
                   ],
                 ),
-              )
+              ),
             ],
-          )
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          ),
+      ),
     );
   }
 
-  _checkPerms() async {
-    _cameraStatus = await Permission.camera.status;
-    _locationStatus = await Permission.location.status;
+  Future<Null> _checkPerms() {
+    return Permission.storage.status
+        .then((value) {
+          setState(() {
+            _storageStatus = value;
+          });
+        })
+        .then((nothing) => Permission.location.status)
+        .then((value) {
+          setState(() {
+            _locationStatus = value;
+          });
+        })
+        .then((nothing) => Permission.camera.status)
+        .then((value) {
+        setState(() {
+          _cameraStatus = value;
+        });
+      });
   }
 
-  _onInitDo() async {
-    await _checkPerms();
-    if (_cameraStatus.isGranted && _locationStatus.isGranted) {
-      Navigator.of(context).pushReplacementNamed("/home");
-    }
+  Future<Null> _onInitDo() {
+    return _checkPerms().then((nothing) {
+      if (_storageStatus.isGranted && _locationStatus.isGranted && _cameraStatus.isGranted) {
+        Navigator.of(context).pushReplacementNamed("/home", arguments: "Server name data");
+      }
+    });
   }
 
 
-  _optContinueButton() {
-    if (_cameraStatus != PermissionStatus.granted || _locationStatus != PermissionStatus.granted) {
+  dynamic _optContinueButton() {
+    if (_storageStatus != PermissionStatus.granted || _locationStatus != PermissionStatus.granted || _cameraStatus != PermissionStatus.granted) {
       return OutlineButton(
         child: Row(
           children: [
@@ -126,33 +157,39 @@ class _PermissionCheckState extends State<PermissionCheck> {
     }
   }
 
-  _reqCamera() async {
-    var newstate = await Permission.camera.request();
-    setState(() {
-      _cameraStatus = newstate;
+  Future<Null> _reqStorage() {
+    return Permission.storage.request().then((state) {
+      setState(() {
+        _storageStatus = state;
+      });
     });
   }
 
-  _reqLocation() async {
-    var newstate = await Permission.location.request();
-    setState(() {
-      _locationStatus = newstate;
+  Future<Null> _reqCamera() {
+    return Permission.camera.request().then((state) {
+      setState(() {
+        _cameraStatus = state;
+      });
     });
   }
 
-  _requestAllPermissions() async {
-    var states = await [Permission.location, Permission.camera].request();
-    setState(() {
-      _locationStatus = states[0];
-      _cameraStatus = states[1];
+  Future<Null> _reqLocation() async {
+    return Permission.location.request().then((state) {
+      setState(() {
+        _locationStatus = state;
+      });
     });
-    await _checkPerms(); //Necessario per garantire la corretta lettura dei permessi, essendo una doppia richiesta potrebbe riportarne i valori incorrettamente
   }
 
-  _optAndroidWarning() {
+  Future<Null> _requestAllPermissions() {
+    return [Permission.location, Permission.storage, Permission.camera].request()
+        .then((ignore) => _checkPerms());
+  }
+
+  dynamic _optAndroidWarning() {
     if (Reference.isAndroid11) {
       return Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         child: Row(
           children: [
             Icon(Icons.warning, size: 40,),
