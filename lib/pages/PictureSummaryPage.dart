@@ -49,12 +49,6 @@ class PictureSummaryPage extends StatelessWidget {
             },
             icon: Icon(Icons.delete_forever),
           ),
-          IconButton(
-            onPressed: () async {
-              await Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
-            },
-            icon: Icon(Icons.fullscreen),
-          ),
           Builder(
             builder:(newContext) {
               if (Reference.isAndroid11) return SizedBox(width: 0, height: 0,);
@@ -89,12 +83,15 @@ class PictureSummaryPage extends StatelessWidget {
           Flexible(
             flex: 6,
             child: Center(
-                child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
-                  if (imm || frame != null) {
-                    return child;
-                  }
-                  return CircularProgressIndicator();
-                },)
+                child: InkWell(
+                  child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
+                    if (imm || frame != null) {
+                      return child;
+                    }
+                    return CircularProgressIndicator();
+                  },),
+                  onTap: () => Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom])),
+                )
             )
           ),
           Expanded(
