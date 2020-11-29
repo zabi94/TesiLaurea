@@ -93,10 +93,10 @@ class PictureSummaryPage extends StatelessWidget {
                   ),
                   onScaleUpdate: (details) {
                     if (details.scale > 2) {
-                      Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
+                      openFullscreen(context, record.getFilePath());
                     }
                   },
-                  onTap: () => Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: record.getFilePath()).then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom])),
+                  onTap: () => openFullscreen(context, record.getFilePath()),
                 ),
               )
           ),
@@ -136,5 +136,11 @@ class PictureSummaryPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<Null> openFullscreen(BuildContext context, String path) {
+    return SystemChrome.setEnabledSystemUIOverlays([])
+        .then((value) => Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: path))
+        .then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
   }
 }
