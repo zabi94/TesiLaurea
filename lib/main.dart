@@ -74,7 +74,14 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
             if (!(settings.arguments is String)) {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture/full expects a String"));
             }
-            return MaterialPageRoute(builder: (context) => FullscreenImagePage(settings.arguments));
+            return PageRouteBuilder(
+                pageBuilder: (_,__,___) => FullscreenImagePage(settings.arguments),
+                opaque: false,
+                transitionsBuilder: (context, anim, dur, child) => FadeTransition(
+                  child: child,
+                  opacity: anim,
+                )
+            );
           case '/addPicture':
             if (settings.arguments is PickedFile) {
               return MaterialPageRoute(builder: (context) => TakePicturePage(settings.arguments));

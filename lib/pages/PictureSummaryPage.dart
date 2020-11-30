@@ -139,7 +139,7 @@ class PictureSummaryPage extends StatelessWidget {
   }
 
   Future<void> openFullscreen(BuildContext context, String path) {
-    return SystemChrome.setEnabledSystemUIOverlays([])
+    return SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top])
         .then((value) => Navigator.of(context).pushNamed("/gallery/showPicture/full", arguments: path))
         .then((value) => SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]));
   }

@@ -11,13 +11,20 @@ class FullscreenImagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InteractiveViewer(
-      child: Hero(
-          transitionOnUserGestures: true,
-          tag: imageFile,
-          child: Image.file(File(imageFile))
+    return Container(
+      child: SafeArea(
+        child: InteractiveViewer(
+          child: Hero(
+              transitionOnUserGestures: true,
+              tag: imageFile,
+              child: Image.file(File(imageFile))
+          ),
+          maxScale: 8,
+        ),
       ),
-      maxScale: 8,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(200, 0, 0, 0)
+      ),
     );
   }
 
