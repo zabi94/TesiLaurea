@@ -109,4 +109,9 @@ class PictureRecord {
     return result;
   }
 
+  Text getTextDescription() {
+    if (_description.isNotEmpty) return Text(_description);
+    return Text("Nessuna descrizione", style: TextStyle(fontStyle: FontStyle.italic),);
+  }
+
 }

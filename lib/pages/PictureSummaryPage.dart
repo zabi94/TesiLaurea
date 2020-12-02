@@ -122,7 +122,7 @@ class PictureSummaryPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Align(
-                            child: Text(record.getDescription()),
+                            child: record.getTextDescription(),
                             alignment: Alignment.centerLeft,
                           ),
                         ],

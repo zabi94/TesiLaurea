@@ -67,7 +67,7 @@ class _GalleryTileState extends State<GalleryTile> {
                     ),
                     SizedBox(width: 10,),
                     Expanded(
-                      child: _emptyAlternative(widget._record.getDescription(), "Nessuna descrizione"),
+                      child: widget._record.getTextDescription(),
                     )
                   ],
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -103,11 +103,6 @@ class _GalleryTileState extends State<GalleryTile> {
         size: 30,
       ),
     );
-  }
-
-  Text _emptyAlternative(String string, String or) {
-    if (string.isNotEmpty) return Text(string);
-    return Text(or, style: Theme.of(context).textTheme.bodyText2.apply(fontStyle: FontStyle.italic, ), textAlign: TextAlign.center,);
   }
 
 }
