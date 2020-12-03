@@ -101,7 +101,7 @@ class PictureSummaryPage extends StatelessWidget {
               )
           ),
           Expanded(
-            flex: 2,
+            flex: 5,
             child: Card(
               elevation: 8,
               child: SingleChildScrollView(
