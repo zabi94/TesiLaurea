@@ -47,7 +47,6 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
       onGenerateRoute: (settings) {
 
         String args = "Errore generico";
-
         if (settings.arguments is String) {
           args = settings.arguments;
         }
@@ -55,21 +54,38 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (context) => SplashPage());
+
+
           case '/permissions':
             return MaterialPageRoute(builder: (context) => PermissionCheck());
+
+
           case '/home':
             if (!(settings.arguments is String)) {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/home expects the server name"));
             }
             String args = settings.arguments;
             return MaterialPageRoute(builder: (context) => Homepage(args));
+
+
           case '/firstConfiguration':
             return MaterialPageRoute(builder: (context) => ServerConfigPage());
+
+
           case '/gallery/showPicture':
             if (!(settings.arguments is PictureRecord)) {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture expects a PictureRecord"));
             }
-            return MaterialPageRoute(builder: (context) => PictureSummaryPage(settings.arguments));
+            return PageRouteBuilder(
+                pageBuilder: (_,__,___) => PictureSummaryPage(settings.arguments),
+                opaque: false,
+                transitionsBuilder: (context, anim, dur, child) => FadeTransition(
+                  child: child,
+                  opacity: anim,
+                )
+            );
+
+
           case '/gallery/showPicture/full':
             if (!(settings.arguments is String)) {
               return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/gallery/showPicture/full expects a String"));
@@ -82,11 +98,15 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
                   opacity: anim,
                 )
             );
+
+
           case '/addPicture':
             if (settings.arguments is PickedFile) {
               return MaterialPageRoute(builder: (context) => TakePicturePage(settings.arguments));
             }
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/addPicture expects PickedFile data"));
+
+
           default:
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: args));
         }
