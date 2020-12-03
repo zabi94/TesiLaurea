@@ -8,16 +8,23 @@ class GalleryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<List<PictureRecord>> future = context.watch<DatabaseInterface>().getCompletedUploads();
-    return FutureBuilder(
-      future: future,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<PictureRecord> imageRecords = snapshot.data;
-          if (imageRecords.isEmpty) return _getEmptyGridView();
-          return _getCardList(imageRecords);
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (details.primaryVelocity > 0) {
+          Scaffold.of(context).openDrawer();
         }
-        return _getLoadingSpinner();
       },
+      child: FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<PictureRecord> imageRecords = snapshot.data;
+            if (imageRecords.isEmpty) return _getEmptyGridView();
+            return _getCardList(imageRecords);
+          }
+          return _getLoadingSpinner();
+        },
+      ),
     );
   }
 

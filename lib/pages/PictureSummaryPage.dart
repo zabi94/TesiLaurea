@@ -75,65 +75,70 @@ class PictureSummaryPage extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(height: 8,),
-          Flexible(
-            flex: 6,
-              child: Center(
-                child: GestureDetector(
-                  child: Hero(
-                    child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
-                      if (imm || frame != null) {
-                        return child;
+      body: GestureDetector(
+        onHorizontalDragEnd: (det) {
+          if (det.primaryVelocity > 0) Navigator.pop(context);
+        },
+        child: Column(
+          children: [
+            SizedBox(height: 8,),
+            Flexible(
+              flex: 6,
+                child: Center(
+                  child: GestureDetector(
+                    child: Hero(
+                      child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
+                        if (imm || frame != null) {
+                          return child;
+                        }
+                        return CircularProgressIndicator();
+                      },),
+                      tag: record.getFilePath(),
+                    ),
+                    onScaleUpdate: (details) {
+                      if (details.scale > 2) {
+                        openFullscreen(context, record.getFilePath());
                       }
-                      return CircularProgressIndicator();
-                    },),
-                    tag: record.getFilePath(),
+                    },
+                    onTap: () => openFullscreen(context, record.getFilePath()),
                   ),
-                  onScaleUpdate: (details) {
-                    if (details.scale > 2) {
-                      openFullscreen(context, record.getFilePath());
-                    }
-                  },
-                  onTap: () => openFullscreen(context, record.getFilePath()),
-                ),
-              )
-          ),
-          Expanded(
-            flex: 5,
-            child: Card(
-              elevation: 8,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Wrap(
-                          direction: Axis.horizontal,
-                          alignment: WrapAlignment.start,
-                          children: record.getChipTags(),
-                          spacing: 5.0,
-                        )
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Align(
-                            child: record.getTextDescription(),
-                            alignment: Alignment.centerLeft,
-                          ),
-                        ],
+                )
+            ),
+            Expanded(
+              flex: 5,
+              child: Card(
+                elevation: 8,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            alignment: WrapAlignment.start,
+                            children: record.getChipTags(),
+                            spacing: 5.0,
+                          )
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Align(
+                              child: record.getTextDescription(),
+                              alignment: Alignment.centerLeft,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
