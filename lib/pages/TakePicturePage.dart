@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,11 +28,41 @@ class _TakePictureState extends State<TakePicturePage> {
   PickedFile _file;
   List<TagWidget> tags = [];
   List<bool> states = [];
+  bool _gpsFixed = false;
+  bool _gpsFailed = false;
+  double longitude, latitude;
 
   _TakePictureState(this._file) {
     var example = ["Segnaletica stradale", "Manto stradale", "Servizi fognari", "Aree verdi", "Servizi urbani", "Pulizia", "Ostacolo", "Barriera architettonica"];
     tags = List.generate(example.length, (index) => TagWidget(example[index], getTagState, onTagSelectionChanged, index));
     states = List.generate(tags.length, (index) => false);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Location loc = new Location();
+    Future<bool> service = loc.serviceEnabled().then((enabled) {
+      if (!enabled) return loc.requestService();
+      return true;
+    });
+
+    service.then((actuallyEnabled) {
+      if (actuallyEnabled) {
+        loc.getLocation().then((location) {
+          setState(() {
+            longitude = location.longitude;
+            latitude = location.latitude;
+            _gpsFixed = true;
+          });
+        });
+      } else {
+        setState(() {
+          _gpsFailed = true;
+        });
+      }
+    });
+
   }
 
   @override
@@ -41,12 +72,20 @@ class _TakePictureState extends State<TakePicturePage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(Reference.appTitle),
-        actions: [
+        actions: _gpsFailed ? [
+          Icon(Icons.error_outline)
+        ] : _gpsFixed ? [
           IconButton(
             icon: Icon(Icons.check),
             onPressed: () => startUpload(context),
           )
+        ] : [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Center(child: Text("Localizzazione...")),
+          )
         ],
+
       ),
       body: SingleChildScrollView(
         reverse: true,
@@ -80,7 +119,7 @@ class _TakePictureState extends State<TakePicturePage> {
     destDir.createSync(recursive: true);
     File photoFile = File(_file.path);
     File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
-    context.read<DatabaseInterface>().addPicture(copiedFile.path, controller.value.text, tagList, 0.1, 2.3);
+    context.read<DatabaseInterface>().addPicture(copiedFile.path, controller.value.text, tagList, latitude, longitude);
     Navigator.of(context).pop();
     //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
   }

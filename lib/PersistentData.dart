@@ -114,4 +114,12 @@ class PictureRecord {
     return Text("Nessuna descrizione", style: TextStyle(fontStyle: FontStyle.italic),);
   }
 
+  double getLatitude() {
+    return _lat;
+  }
+
+  double getLongitude() {
+    return _lon;
+  }
+
 }

@@ -33,6 +33,7 @@ dependencies:
   gallery_saver: #Ability to save images to gallery
   device_info: #Ability to warn Android 11 users
   provider: #Ability to watch changes in the db
+  location: #Ability to locate device through GPS
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
