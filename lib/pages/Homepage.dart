@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
+import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
@@ -91,8 +93,9 @@ class _HomepageState extends State<Homepage> {
                 title: Text("(WIP) Impostazioni"),
                 leading: Icon(Icons.settings),
               ),
-              onTap: () {
-                Navigator.of(context).pushReplacementNamed("/settings", arguments: "Pagina 'Impostazioni' non implementata");
+              onTap: () async {
+                print("Starting debug upload");
+                UploadManager.uploadPending("test upload", "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}");
               },
               splashColor: Colors.orange,
             ),

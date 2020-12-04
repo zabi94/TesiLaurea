@@ -29,12 +29,4 @@ class _TagWidgetState extends State<TagWidget> {
       //avatar: _getAvatar(widget._getState(widget.index)),
     );
   }
-  
-  Widget _getAvatar(bool state) {
-    if (state) {
-      return Icon(Icons.check);
-    }
-    return Icon(Icons.add);
-  }
-
 }

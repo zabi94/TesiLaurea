@@ -10,10 +10,10 @@ class ServerConfigPage extends StatefulWidget {
 
 class _ServerConfigState extends State<ServerConfigPage> {
 
-  TextEditingController controller_serverField = TextEditingController(
+  TextEditingController serverFieldController = TextEditingController(
     text: "https://"
   );
-  TextEditingController controller_portField = TextEditingController(
+  TextEditingController portFieldController = TextEditingController(
     text: "443"
   );
 
@@ -21,8 +21,8 @@ class _ServerConfigState extends State<ServerConfigPage> {
 
   @override
   void dispose() {
-    controller_serverField.dispose();
-    controller_portField.dispose();
+    serverFieldController.dispose();
+    portFieldController.dispose();
     super.dispose();
   }
 
@@ -67,7 +67,7 @@ class _ServerConfigState extends State<ServerConfigPage> {
                 },
                 autofocus: true,
                 enableSuggestions: false,
-                controller: controller_serverField,
+                controller: serverFieldController,
                 maxLines: 1,
                 autocorrect: false,
                 keyboardType: TextInputType.url,
@@ -84,7 +84,7 @@ class _ServerConfigState extends State<ServerConfigPage> {
                 },
                 autofocus: false,
                 enableSuggestions: false,
-                controller: controller_portField,
+                controller: portFieldController,
                 maxLines: 1,
                 autocorrect: false,
                 keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
@@ -93,12 +93,6 @@ class _ServerConfigState extends State<ServerConfigPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("Le informazioni in questa pagina sono completamente ignorate in questa versione dell'app, è stata inserita in previsione di una funzione futura. È possibile inserire valori casuali",
-                textAlign: TextAlign.center,
-              ),
-            )
           ],
         ),
         Padding(
@@ -109,8 +103,8 @@ class _ServerConfigState extends State<ServerConfigPage> {
                 _saving = true;
               });
               final prefs = await SharedPreferences.getInstance();
-              await prefs.setString(Reference.prefs_server, controller_serverField.value.text);
-              await prefs.setInt(Reference.prefs_port, int.tryParse(controller_portField.value.text));
+              await prefs.setString(Reference.prefs_server, serverFieldController.value.text);
+              await prefs.setInt(Reference.prefs_port, int.tryParse(portFieldController.value.text));
               setState(() {
                 _saving = false;
               });

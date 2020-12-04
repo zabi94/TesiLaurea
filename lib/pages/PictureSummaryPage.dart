@@ -22,56 +22,55 @@ class PictureSummaryPage extends StatelessWidget {
           IconButton(
             onPressed: () {
               showDialog(
-                context: context,
-                builder: (ctx) {
-                  return AlertDialog(
-                    title: Text("Sei sicuro di voler eliminare la foto?"),
-                    content: Text("Non verrà rimossa dal server su cui è stata caricata."),
-                    actions: [
-                      FlatButton(
-                        child: Text("ANNULLA"),
-                        onPressed: () => Navigator.of(ctx).pop(),
-                      ),
-                      FlatButton(
-                        child: Text("CONFERMA ELIMINAZIONE"),
-                        onPressed: () async {
-                          await context.read<DatabaseInterface>().deletePicture(record.getFilePath());
-                          Navigator.of(ctx).pop();
-                          Navigator.of(ctx).pop(true);
-                        },
-                      )
-                    ],
-                  );
-                }
+                  context: context,
+                  builder: (ctx) {
+                    return AlertDialog(
+                      title: Text("Sei sicuro di voler eliminare la foto?"),
+                      content: Text("Non verrà rimossa dal server su cui è stata caricata."),
+                      actions: [
+                        FlatButton(
+                          child: Text("ANNULLA"),
+                          onPressed: () => Navigator.of(ctx).pop(),
+                        ),
+                        FlatButton(
+                          child: Text("CONFERMA ELIMINAZIONE"),
+                          onPressed: () async {
+                            await context.read<DatabaseInterface>().deletePicture(record.getFilePath());
+                            Navigator.of(ctx).pop();
+                            Navigator.of(ctx).pop(true);
+                          },
+                        )
+                      ],
+                    );
+                  }
               );
             },
             icon: Icon(Icons.delete_forever),
           ),
           Builder(
-            builder:(newContext) {
-              if (Reference.isAndroid11) return SizedBox(width: 0, height: 0,);
-              return IconButton(
-                onPressed: () async {
-                  GallerySaver.saveImage(
-                      record.getFilePath(), albumName: "ImageTagger").then((
-                      value) {
-                    Scaffold.of(newContext).showSnackBar(SnackBar(
-                      duration: Duration(seconds: 3),
-                      content: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(value
-                              ? "File copiato nella galleria"
-                              : "Non copiato, errore sconosciuto"),
-                          Icon(value ? Icons.check : Icons.error),
-                        ],
-                      ),
-                    ));
-                  });
-                },
-                icon: Icon(Icons.drive_file_move),
-              );
-            }
+              builder:(newContext) {
+                if (Reference.isAndroid11) return SizedBox(width: 0, height: 0,);
+                return IconButton(
+                  onPressed: () async {
+                    GallerySaver.saveImage(
+                        record.getFilePath(), albumName: "ImageTagger").then((value) {
+                      Scaffold.of(newContext).showSnackBar(SnackBar(
+                        duration: Duration(seconds: 3),
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(value
+                                ? "File copiato nella galleria"
+                                : "Non copiato, errore sconosciuto"),
+                            Icon(value ? Icons.check : Icons.error),
+                          ],
+                        ),
+                      ));
+                    });
+                  },
+                  icon: Icon(Icons.drive_file_move),
+                );
+              }
           )
         ],
       ),
@@ -83,7 +82,7 @@ class PictureSummaryPage extends StatelessWidget {
           children: [
             SizedBox(height: 8,),
             Flexible(
-              flex: 6,
+                flex: 6,
                 child: Center(
                   child: GestureDetector(
                     child: Hero(

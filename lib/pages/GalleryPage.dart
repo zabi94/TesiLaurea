@@ -7,7 +7,7 @@ class GalleryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<List<PictureRecord>> future = context.watch<DatabaseInterface>().getCompletedUploads();
+    Future<List<PictureRecord>> future = context.watch<DatabaseInterface>().getAllPictures();
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity > 0) {

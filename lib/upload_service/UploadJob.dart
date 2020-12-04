@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 
 class UploadJob {
 
@@ -21,12 +24,13 @@ class UploadJob {
       "description": _description,
       "latitude": _latitude,
       "longitude": _longitude,
-      "uploadId": _uploadId
+      "uploadId": _uploadId,
+      "imageBase64": base64Encode(File(_imageFilePath).readAsBytesSync())
       
     };
     return _jenc.convert(jsonRoot);
   }
 
-
+  String get file => _imageFilePath;
 
 }

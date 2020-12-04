@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
 
 class DatabaseInterface with ChangeNotifier {
+
+  static DatabaseInterface _instance;
 
   Future<Database> _db;
   bool ready = false;
@@ -31,6 +34,13 @@ class DatabaseInterface with ChangeNotifier {
         ));
   }
 
+  static DatabaseInterface get instance {
+    if (_instance == null) {
+      _instance = DatabaseInterface();
+    }
+    return _instance;
+  }
+
   Future<Null> addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
     PictureRecord record = PictureRecord(_file, description, jsonEncode(tags), latitude, longitude);
     return _db.then((db) => db.insert("pictures", record.toMap()))
@@ -38,12 +48,16 @@ class DatabaseInterface with ChangeNotifier {
   }
 
   Future<List<PictureRecord>> getPendingUploads() async {
-    return _db.then((db) => db.query("pictures", where: "uploadedTo == ''", ))
+    return _db.then((db) => db.query("pictures", where: "ifnull(uploadedTo, '') = ''", ))
         .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
   Future<List<PictureRecord>> getCompletedUploads() async {
+    return _db.then((db) => db.query("pictures", orderBy: "-rowid", where: "ifnull(uploadedTo, '') != ''"))
+        .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
+  }
 
+  Future<List<PictureRecord>> getAllPictures() async {
     return _db.then((db) => db.query("pictures", orderBy: "-rowid"))
         .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
@@ -61,6 +75,20 @@ class DatabaseInterface with ChangeNotifier {
           notifyListeners();
         });
       });
+  }
+
+  Future<bool> complete(UploadJob j, String destination) {
+    return _db.then(
+            (db) => db.update(
+              "pictures",
+              {"uploadedTo": destination},
+              where: "fileRef = ?",
+              whereArgs: [j.file]
+            ).then((rows) {
+              print("Updated $rows rows");
+              return rows > 0;
+            })
+    ).whenComplete(() => notifyListeners()).whenComplete(() => print("Updated entry ${j.file}"));
   }
 
 }
