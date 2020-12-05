@@ -66,9 +66,7 @@ class _GalleryTileState extends State<GalleryTile> {
                       ),
                     ),
                     SizedBox(width: 10,),
-                    Expanded(
-                      child: widget._record.getTextDescription(),
-                    )
+                    Text(widget._record.getDescription(), maxLines: 8, overflow: TextOverflow.fade,)
                   ],
                   mainAxisAlignment: MainAxisAlignment.start,
                 ),
