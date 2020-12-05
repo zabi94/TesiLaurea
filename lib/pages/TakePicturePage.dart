@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/BlinkingWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
 
 class TakePicturePage extends StatefulWidget {
@@ -41,6 +43,30 @@ class _TakePictureState extends State<TakePicturePage> {
   @override
   void initState() {
     super.initState();
+    startNewGpsChain();
+  }
+
+  void gpsFix(Location loc, int tries) {
+    if (tries == 0) {
+      setState(() {
+        _gpsFailed = true;
+      });
+    } else {
+      loc.getLocation().then((location) {
+        setState(() {
+          longitude = location.longitude;
+          latitude = location.latitude;
+          _gpsFixed = true;
+        });
+      }).timeout(Duration(seconds: 10), onTimeout: () { gpsFix(loc, tries - 1); });
+    }
+  }
+
+  void startNewGpsChain() async {
+    setState(() {
+      _gpsFailed = false;
+      _gpsFixed = false;
+    });
     Location loc = new Location();
     Future<bool> service = loc.serviceEnabled().then((enabled) {
       if (!enabled) return loc.requestService();
@@ -49,20 +75,13 @@ class _TakePictureState extends State<TakePicturePage> {
 
     service.then((actuallyEnabled) {
       if (actuallyEnabled) {
-        loc.getLocation().then((location) {
-          setState(() {
-            longitude = location.longitude;
-            latitude = location.latitude;
-            _gpsFixed = true;
-          });
-        });
+        gpsFix(loc, 3);
       } else {
         setState(() {
           _gpsFailed = true;
         });
       }
     });
-
   }
 
   @override
@@ -73,7 +92,10 @@ class _TakePictureState extends State<TakePicturePage> {
       appBar: AppBar(
         title: Text(Reference.appTitle),
         actions: _gpsFailed ? [
-          Icon(Icons.error_outline)
+          IconButton(
+            icon: Icon(Icons.error_outline),
+            onPressed: startNewGpsChain,
+          )
         ] : _gpsFixed ? [
           IconButton(
             icon: Icon(Icons.check),
@@ -81,11 +103,10 @@ class _TakePictureState extends State<TakePicturePage> {
           )
         ] : [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Center(child: Text("Localizzazione...")),
-          )
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: BlinkingWidget(Duration(milliseconds: 500), Icon(Icons.gps_fixed), Icon(Icons.gps_not_fixed)),
+          ),
         ],
-
       ),
       body: SingleChildScrollView(
         reverse: true,
