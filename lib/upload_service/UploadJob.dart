@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
-
 class UploadJob {
 
   static final JsonEncoder _jenc = JsonEncoder();
