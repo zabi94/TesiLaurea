@@ -23,21 +23,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  permission_handler: #Used to grant location/camera/storage access
-  image_picker: #Used to invoke the system camera to acquire a picture
-  shared_preferences: #Used to save config data
-  path_provider: #Used to get common storage directories
-  path: #Used to manipulate file and directories
-  http: #Used to contact http servers
-  sqflite: #Used to provide db capabilities
-  gallery_saver: #Ability to save images to gallery
-  device_info: #Ability to warn Android 11 users
-  provider: #Ability to watch changes in the db
-  location: #Ability to locate device through GPS
-  background_fetch: ^0.5.1 #Ability to create background tasks
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.0
+  permission_handler: ^5.0.1+1 #Used to grant location/camera/storage access
+  image_picker: ^0.6.7+15 #Used to invoke the system camera to acquire a picture
+  shared_preferences: ^0.5.12+4 #Used to save config data
+  path_provider: ^1.6.24 #Used to get common storage directories
+  path: ^1.7.0 #Used to manipulate file and directories
+  http: ^0.12.2 #Used to contact http servers
+  sqflite: ^1.3.2+1 #Used to provide db capabilities
+  gallery_saver: ^2.0.1 #Ability to save images to gallery
+  device_info: ^1.0.0 #Ability to warn Android 11 users
+  provider: ^4.3.2+3 #Ability to watch changes in the db
+  location: ^3.1.0 #Ability to locate device through GPS
+  background_fetch: ^0.6.0 #Ability to create background tasks
 
 dev_dependencies:
   flutter_test:
