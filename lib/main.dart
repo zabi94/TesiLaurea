@@ -10,6 +10,7 @@ import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
 import 'package:tesi_simone_zanin_140833/pages/PictureSummaryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/SplashPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/TakePicturePage.dart';
+import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 
 import 'pages/ErrorPage.dart';
 
@@ -24,7 +25,7 @@ void main() async {
         child: AppContainer(),
       )
   );
-
+  UploadManager.configure();
   DatabaseInterface.instance.getPendingUploads().then((list) {
     list.forEach((pr) {
       print(pr.getFilePath());
