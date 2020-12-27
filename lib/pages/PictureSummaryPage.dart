@@ -78,89 +78,79 @@ class PictureSummaryPage extends StatelessWidget {
         onHorizontalDragEnd: (det) {
           if (det.primaryVelocity > 0) Navigator.pop(context);
         },
-        child: LayoutBuilder(
-          builder: (context, constr) => SingleChildScrollView(
-            child: IntrinsicHeight(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minHeight: constr.maxHeight),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: GestureDetector(
+                    child: Hero(
+                      child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
+                        if (imm || frame != null) {
+                          return child;
+                        }
+                        return CircularProgressIndicator();
+                      },),
+                      tag: record.getFilePath(),
+                    ),
+                    onScaleUpdate: (details) {
+                      if (details.scale > 2) {
+                        openFullscreen(context, record.getFilePath());
+                      }
+                    },
+                    onTap: () => openFullscreen(context, record.getFilePath()),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 1,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     SizedBox(height: 8,),
-                    Container(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height/2
-                      ),
-                      child: Center(
-                        child: GestureDetector(
-                          child: Hero(
-                            child: Image.file(File(record.getFilePath()), frameBuilder: (ctx, child, frame, imm) {
-                              if (imm || frame != null) {
-                                return child;
-                              }
-                              return CircularProgressIndicator();
-                            },),
-                            tag: record.getFilePath(),
-                          ),
-                          onScaleUpdate: (details) {
-                            if (details.scale > 2) {
-                              openFullscreen(context, record.getFilePath());
-                            }
-                          },
-                          onTap: () => openFullscreen(context, record.getFilePath()),
-                        ),
-                      ),
-                    ),
                     Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Card(
-                          elevation: 8,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Wrap(
-                                        direction: Axis.horizontal,
-                                        alignment: WrapAlignment.start,
-                                        children: record.getChipTags(),
-                                        spacing: 5.0,
-                                      )
+                      child: Card(
+                        elevation: 8,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Wrap(
+                                  direction: Axis.horizontal,
+                                  alignment: WrapAlignment.center,
+                                  children: record.getChipTags(),
+                                  spacing: 5.0,
+                                )
+                            ),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Align(
+                                    child: record.getTextDescription(),
+                                    alignment: Alignment.centerLeft,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        Align(
-                                          child: record.getTextDescription(),
-                                          alignment: Alignment.centerLeft,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                ],
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Align(
-                                  child: Text("LAT: ${record.getLatitude()}, LON: ${record.getLongitude()}"),
-                                  alignment: Alignment.bottomCenter,
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Align(
+                                child: Text("LAT: ${record.getLatitude()}, LON: ${record.getLongitude()}"),
+                                alignment: Alignment.bottomCenter,
+                              ),
+                            )
+                          ],
                         ),
                       ),
                     )
                   ],
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
