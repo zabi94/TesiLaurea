@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
-import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
+import 'package:tesi_simone_zanin_140833/pages/FirstConfigurationPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/FullscreenImagePage.dart';
 import 'package:tesi_simone_zanin_140833/pages/Homepage.dart';
 import 'package:tesi_simone_zanin_140833/pages/PermissionCheck.dart';
 import 'package:tesi_simone_zanin_140833/pages/PictureSummaryPage.dart';
-import 'package:tesi_simone_zanin_140833/pages/ServerConfigPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/SplashPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/TakePicturePage.dart';
-import 'package:background_fetch/background_fetch.dart' as bg;
 
 import 'pages/ErrorPage.dart';
 
@@ -28,21 +25,6 @@ void main() async {
       )
   );
 
-  bg.BackgroundFetch.configure(
-      bg.BackgroundFetchConfig(
-        minimumFetchInterval: 30,
-        enableHeadless: true,
-        startOnBoot: true,
-        requiredNetworkType: bg.NetworkType.UNMETERED,
-        stopOnTerminate: false,
-        requiresStorageNotLow: false,
-        requiresBatteryNotLow: true,
-        requiresCharging: false,
-        requiresDeviceIdle: false,
-        forceAlarmManager: false
-      ),
-      (String id) async => UploadManager.uploadPending(id, "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}")
-  );
   DatabaseInterface.instance.getPendingUploads().then((list) {
     list.forEach((pr) {
       print(pr.getFilePath());
@@ -85,15 +67,11 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
 
 
           case '/home':
-            if (!(settings.arguments is String)) {
-              return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/home expects the server name"));
-            }
-            String args = settings.arguments;
-            return MaterialPageRoute(builder: (context) => Homepage(args));
+            return MaterialPageRoute(builder: (context) => Homepage());
 
 
           case '/firstConfiguration':
-            return MaterialPageRoute(builder: (context) => ServerConfigPage());
+            return MaterialPageRoute(builder: (context) => FirstConfigurationPage());
 
 
           case '/gallery/showPicture':
@@ -130,6 +108,8 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
             }
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/addPicture expects PickedFile data"));
 
+          case '/settings':
+            return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "Impostazioni non ancora implementate"));
 
           default:
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: args));

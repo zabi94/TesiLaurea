@@ -1,13 +1,17 @@
 import 'dart:convert';
 
+import 'package:background_fetch/background_fetch.dart' as bg;
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
+import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
 
 class UploadManager {
 
-  static Future<int> uploadPending(String id, String destinationUrl) async {
+  static Future<int> _uploadPending(String id) async {
     int completedSuccesfully = 0;
+    String destinationUrl = "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}";
     List<UploadJob> jobs = (await DatabaseInterface.instance.getPendingUploads())
         .map((e) => UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude())).toList();
 
@@ -23,14 +27,55 @@ class UploadManager {
         .then((value) { if (value) {completedSuccesfully++; }  return value;})
     ).toList();
 
-    return Future.wait(futures).whenComplete(() => print("Completed $completedSuccesfully job(s) out of ${jobs.length}"))
-    .then((value) => Future.value(completedSuccesfully));
+    return Future.wait(futures)
+        .whenComplete(() {
+          print("Completed $completedSuccesfully job(s) out of ${jobs.length}");
+          bg.BackgroundFetch.finish(id);
+        })
+        .then((value) => Future.value(completedSuccesfully));
   }
 
   static Object _toStringList(Object index, Object list) {
     if (index != null) return list;
     List<dynamic> dynlist = list as List<dynamic>;
     return dynlist.map((e) => e.toString()).toList();
+  }
+
+  static void configure() {
+    bg.BackgroundFetch.configure(
+        bg.BackgroundFetchConfig(
+            minimumFetchInterval: 15,
+            enableHeadless: true,
+            startOnBoot: true,
+            requiredNetworkType: bg.NetworkType.UNMETERED,
+            stopOnTerminate: false,
+            requiresStorageNotLow: false,
+            requiresBatteryNotLow: true,
+            requiresCharging: false,
+            requiresDeviceIdle: false,
+            forceAlarmManager: false
+        ), onUploadTaskExecuting,
+    );
+    bg.BackgroundFetch.registerHeadlessTask(scheduleNextUpload);
+  }
+
+  static void onUploadTaskExecuting(String id) async {
+    print("Starting non-fetch upload task: $id");
+    UploadManager._uploadPending(id);
+  }
+
+  static void scheduleNextUpload(String id) {
+    print("Automatic background task received: $id");
+    if (id == 'flutter_background_fetch') {
+      bg.BackgroundFetch.scheduleTask(bg.TaskConfig(
+          taskId: "imageTagger.uploadTask@${DateTime.now().toString()}",
+          periodic: false,
+          delay: 0,
+          stopOnTerminate: false,
+          enableHeadless: true
+      ));
+    }
+    bg.BackgroundFetch.finish(id);
   }
 
 }

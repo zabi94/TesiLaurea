@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tesi_simone_zanin_140833/pages/ErrorPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
+import 'package:tesi_simone_zanin_140833/pages/GeneralSettingsPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
-import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
 
-  final String server;
-
-  Homepage(this.server, {Key key}) : super(key: key);
+  Homepage({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _HomepageState();
@@ -21,6 +20,25 @@ class _HomepageState extends State<Homepage> {
   PageController _controller = new PageController(
       initialPage: 0,
   );
+
+  String username = "", server = "";
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        username = prefs.getString(Reference.prefs_username);
+        server = "${prefs.getString(Reference.prefs_server)}:${prefs.getInt(Reference.prefs_port)}";
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +52,9 @@ class _HomepageState extends State<Homepage> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           GalleryPage(),
-          InfoPage()
+          ErrorPage(errorMessage: "Pagina non implementata: storico"),
+          GeneralSettingsPage(),
+          InfoPage(),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -57,11 +77,23 @@ class _HomepageState extends State<Homepage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Icon(Icons.label, size: 50,),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("[[Info server qui]]"),
-                  )
+                  Expanded(
+                    flex: 2,
+                    child: FittedBox(
+                      child: Icon(Icons.person),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  SizedBox(height: 2,),
+                  Text(username, textScaleFactor: 1.4,),
+                  SizedBox(height: 15,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Icon(Icons.cloud_upload),
+                      Text(server),
+                    ],
+                  ),
                 ],
               )
             ),
@@ -79,23 +111,24 @@ class _HomepageState extends State<Homepage> {
             Divider(),
             InkWell(
               child: ListTile(
-                title: Text("(WIP) Cronologia caricamenti"),
+                title: Text("Cronologia caricamenti"),
                 leading: Icon(Icons.history),
               ),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed("/history", arguments: "Pagina 'Cronologia' non implementata");
+                _controller.jumpToPage(1);
+                Navigator.of(context).pop();
               },
               splashColor: Colors.orange,
             ),
             Divider(),
             InkWell(
               child: ListTile(
-                title: Text("(WIP) Impostazioni"),
+                title: Text("Impostazioni"),
                 leading: Icon(Icons.settings),
               ),
-              onTap: () async {
-                print("Starting debug upload");
-                UploadManager.uploadPending("test upload", "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}");
+              onTap: () {
+                _controller.jumpToPage(2);
+                Navigator.of(context).pop();
               },
               splashColor: Colors.orange,
             ),
@@ -106,7 +139,7 @@ class _HomepageState extends State<Homepage> {
                 leading: Icon(Icons.info_outline),
               ),
               onTap: () {
-                _controller.jumpToPage(1);
+                _controller.jumpToPage(3);
                 Navigator.of(context).pop();
               },
               splashColor: Colors.orange,

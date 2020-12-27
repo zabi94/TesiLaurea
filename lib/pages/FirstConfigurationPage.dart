@@ -2,28 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 
-class ServerConfigPage extends StatefulWidget {
+class FirstConfigurationPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _ServerConfigState();
+  State<StatefulWidget> createState() => _FirstConfigState();
 
 }
 
-class _ServerConfigState extends State<ServerConfigPage> {
+class _FirstConfigState extends State<FirstConfigurationPage> {
 
   TextEditingController serverFieldController = TextEditingController(
     text: "https://"
   );
   TextEditingController portFieldController = TextEditingController(
-    text: "443"
+      text: "443"
   );
+  TextEditingController usernameFieldController = TextEditingController();
+  TextEditingController passwordFieldController = TextEditingController();
 
-  bool _saving = false;
+  bool _loading = false;
+  bool firstConfig = true;
 
   @override
   void dispose() {
     serverFieldController.dispose();
     portFieldController.dispose();
+    usernameFieldController.dispose();
+    passwordFieldController.dispose();
     super.dispose();
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        serverFieldController.text = prefs.getString(Reference.prefs_server);
+        portFieldController.text = "${prefs.getInt(Reference.prefs_port)}";
+        usernameFieldController.text = prefs.getString(Reference.prefs_username);
+        firstConfig = !prefs.getBool(Reference.prefs_saved);
+      });
+    });
   }
 
   @override
@@ -33,19 +51,19 @@ class _ServerConfigState extends State<ServerConfigPage> {
         title: Text(Reference.appTitle),
       ),
       body: Center(
-        child: _getBodyForState()
+          child: _getBody(),
       ),
     );
   }
 
-  Widget _getBodyForState() {
-    if (_saving) {
+  Widget _getBody() {
+    if (_loading) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 20,),
-          Text("Salvataggio in corso")
+          Text("Attendi")
         ],
       );
     }
@@ -93,6 +111,38 @@ class _ServerConfigState extends State<ServerConfigPage> {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                autofocus: false,
+                enableSuggestions: false,
+                controller: usernameFieldController,
+                maxLines: 1,
+                autocorrect: false,
+                keyboardType: TextInputType.name,
+                decoration: InputDecoration(
+                    labelText: 'Nome utente'
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                onEditingComplete: () {
+                  //Todo check port format
+                },
+                autofocus: false,
+                enableSuggestions: false,
+                controller: passwordFieldController,
+                maxLines: 1,
+                autocorrect: false,
+                obscureText: true,
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                    labelText: firstConfig?'Password':'Password (Vuoto se non modificata)'
+                ),
+              ),
+            ),
           ],
         ),
         Padding(
@@ -100,13 +150,18 @@ class _ServerConfigState extends State<ServerConfigPage> {
           child: OutlineButton(
             onPressed: () async {
               setState(() {
-                _saving = true;
+                _loading = true;
               });
               final prefs = await SharedPreferences.getInstance();
               await prefs.setString(Reference.prefs_server, serverFieldController.value.text);
               await prefs.setInt(Reference.prefs_port, int.tryParse(portFieldController.value.text));
+              if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
+                await prefs.setString(Reference.prefs_password, passwordFieldController.text);
+              }
+              await prefs.setString(Reference.prefs_username, usernameFieldController.text);
+              await prefs.setBool(Reference.prefs_saved, true);
               setState(() {
-                _saving = false;
+                _loading = false;
               });
               Navigator.of(context).pushReplacementNamed("/");
             },

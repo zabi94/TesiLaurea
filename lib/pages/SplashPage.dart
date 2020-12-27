@@ -50,7 +50,7 @@ class _SplashPageState extends State<SplashPage> {
       if (!prefs.containsKey(Reference.prefs_server) || prefs.getString(Reference.prefs_server).isEmpty) {
         Navigator.pushReplacementNamed(context, "/firstConfiguration",);
       } else {
-        Navigator.pushReplacementNamed(context, "/home", arguments: "${prefs.getString(Reference.prefs_server)}:${prefs.getInt(Reference.prefs_port)}");
+        Navigator.pushReplacementNamed(context, "/home");
       }
     }
   }
