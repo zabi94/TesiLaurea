@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 
 class FirstConfigurationPage extends StatefulWidget {
   @override
@@ -67,7 +68,7 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
         ],
       );
     }
-    return _getContent();
+    return AvoidKeyboardWidget(child: _getContent());
   }
 
   Widget _getContent() {

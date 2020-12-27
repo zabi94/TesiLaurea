@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/DrawerGestureNavigator.dart';
 import 'package:tesi_simone_zanin_140833/pages/ErrorPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GeneralSettingsPage.dart';
@@ -51,10 +52,10 @@ class _HomepageState extends State<Homepage> {
         controller: _controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          GalleryPage(),
-          ErrorPage(errorMessage: "Pagina non implementata: storico"),
-          GeneralSettingsPage(),
-          InfoPage(),
+          DrawerGestureNavigator(child: GalleryPage()),
+          DrawerGestureNavigator(child: ErrorPage(errorMessage: "Pagina non implementata: storico")),
+          DrawerGestureNavigator(child: GeneralSettingsPage()),
+          DrawerGestureNavigator(child: InfoPage()),
         ],
       ),
       floatingActionButton: FloatingActionButton(

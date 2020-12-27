@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/BlinkingWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
 
@@ -146,9 +147,7 @@ class _TakePictureState extends State<TakePicturePage> {
   }
 
   Widget _getPageBody(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - kToolbarHeight - MediaQuery.of(context).padding.top,
-      width: MediaQuery.of(context).size.width,
+    return AvoidKeyboardWidget(
       child: Column(
         children: [
           Expanded(
