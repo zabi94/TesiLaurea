@@ -15,6 +15,7 @@ class PictureSummaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScrollController scroller = ScrollController();
     return Scaffold(
       appBar: AppBar(
         title: Text(Reference.appTitle),
@@ -126,12 +127,18 @@ class PictureSummaryPage extends StatelessWidget {
                                 )
                             ),
                             Expanded(
-                              child: SingleChildScrollView(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Align(
-                                    child: record.getTextDescription(),
-                                    alignment: Alignment.centerLeft,
+                              child: Scrollbar(
+                                isAlwaysShown: true,
+                                controller: scroller,
+                                thickness: 10,
+                                child: SingleChildScrollView(
+                                  controller: scroller,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Align(
+                                      child: record.getTextDescription(),
+                                      alignment: Alignment.centerLeft,
+                                    ),
                                   ),
                                 ),
                               ),
