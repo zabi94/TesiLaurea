@@ -53,7 +53,7 @@ class UploadManager {
             requiresBatteryNotLow: true,
             requiresCharging: false,
             requiresDeviceIdle: false,
-            forceAlarmManager: false
+            forceAlarmManager: true
         ), onUploadTaskExecuting,
     );
     bg.BackgroundFetch.registerHeadlessTask(scheduleNextUpload);
