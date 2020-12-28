@@ -84,7 +84,7 @@ class _GeneralSettingsState extends State<GeneralSettingsPage> {
             ),
             SizedBox(height: 4,),
             OutlineButton(
-              child: Text("Richiedi permessi di nuovo"),
+              child: Text("Riavvia procedura permessi"),
               onPressed: () {
                 Navigator.pushNamed(context, "/permissions");
               },
