@@ -41,10 +41,11 @@ class DatabaseInterface with ChangeNotifier {
     return _instance;
   }
 
-  Future<Null> addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
+  Future<PictureRecord> addPicture(String _file, String description, List<String> tags, double latitude, double longitude) async {
     PictureRecord record = PictureRecord(_file, description, jsonEncode(tags), latitude, longitude);
     return _db.then((db) => db.insert("pictures", record.toMap()))
-        .then((_) {notifyListeners();});
+        .then((_) {notifyListeners();})
+        .then((value) => record);
   }
 
   Future<List<PictureRecord>> getPendingUploads() async {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,11 +8,14 @@ import 'package:location/location.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/BlinkingWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
+import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
+import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 
 class TakePicturePage extends StatefulWidget {
 
@@ -141,9 +145,15 @@ class _TakePictureState extends State<TakePicturePage> {
     destDir.createSync(recursive: true);
     File photoFile = File(_file.path);
     File copiedFile = photoFile.copySync(join(destination, photoFile.path.split("/").last));
-    context.read<DatabaseInterface>().addPicture(copiedFile.path, controller.value.text, tagList, latitude, longitude);
+    Future<PictureRecord> dbEntry = context.read<DatabaseInterface>().addPicture(copiedFile.path, controller.value.text, tagList, latitude, longitude);
     Navigator.of(context).pop();
-    //UploaderService.getInstance().sendJob(UploadJob(getUploadId(), copiedFile.path, tagList, "description string", 0.2, 2.1));
+    SharedPreferences.getInstance()
+        .then((prefs) {
+          if (prefs.getBool(Reference.prefs_upload_immediately)) {
+            dbEntry.then((entry) => UploadManager.uploadSingleJob(entry));
+          }
+        }
+    );
   }
 
   Widget _getPageBody(BuildContext context) {

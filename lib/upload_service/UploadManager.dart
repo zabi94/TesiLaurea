@@ -11,7 +11,7 @@ class UploadManager {
 
   static Future<int> _uploadPending(String id) async {
     int completedSuccesfully = 0;
-    String destinationUrl = "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}";
+    String destinationUrl = await _getDestinationUrl();
     List<UploadJob> jobs = (await DatabaseInterface.instance.getPendingUploads())
         .map((e) => UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude())).toList();
 
@@ -33,6 +33,28 @@ class UploadManager {
           bg.BackgroundFetch.finish(id);
         })
         .then((value) => Future.value(completedSuccesfully));
+  }
+
+  static Future<bool> uploadSingleJob(PictureRecord e) {
+    UploadJob job = UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude());
+    return _performUploadJob(job);
+  }
+  
+  static Future<bool> _performUploadJob(UploadJob j) {
+    return _getDestinationUrl().then((destinationUrl) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
+        .then((response) {
+          if (response.statusCode ~/ 100 == 2) {
+            return DatabaseInterface.instance.complete(j, destinationUrl);
+          } else {
+            print("Error: status code was ${response.statusCode} from $destinationUrl");
+            return Future.value(false);
+          }
+        })
+    );
+  }
+  
+  static Future<String> _getDestinationUrl() async {
+    return "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}";
   }
 
   static Object _toStringList(Object index, Object list) {
