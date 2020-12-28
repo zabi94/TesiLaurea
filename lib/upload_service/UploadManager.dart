@@ -41,7 +41,7 @@ class UploadManager {
     return dynlist.map((e) => e.toString()).toList();
   }
 
-  static void configure() {
+  static void _enableBackgroundTasks() {
     bg.BackgroundFetch.configure(
         bg.BackgroundFetchConfig(
             minimumFetchInterval: 15,
@@ -57,6 +57,33 @@ class UploadManager {
         ), onUploadTaskExecuting,
     );
     bg.BackgroundFetch.registerHeadlessTask(scheduleNextUpload);
+  }
+
+  static void _disableBackgroundTasks() {
+    bg.BackgroundFetch.configure(
+      bg.BackgroundFetchConfig(
+          minimumFetchInterval: 15,
+          enableHeadless: false,
+          startOnBoot: false,
+          requiredNetworkType: bg.NetworkType.UNMETERED,
+          stopOnTerminate: true,
+          requiresStorageNotLow: false,
+          requiresBatteryNotLow: true,
+          requiresCharging: false,
+          requiresDeviceIdle: false,
+          forceAlarmManager: true
+      ), onUploadTaskExecuting,
+    );
+  }
+
+  static void setupTasks() {
+    SharedPreferences.getInstance().then((prefs) {
+      if (prefs.getBool(Reference.prefs_bg_enabled) || false) {
+        _enableBackgroundTasks();
+      } else {
+        _disableBackgroundTasks();
+      }
+    });
   }
 
   static void onUploadTaskExecuting(String id) async {

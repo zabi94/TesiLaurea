@@ -1,5 +1,8 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 
@@ -14,6 +17,17 @@ class _GeneralSettingsState extends State<GeneralSettingsPage> {
   
   bool bgSvcActive = true;
   bool attemptImmediately = true;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        bgSvcActive = prefs.getBool(Reference.prefs_bg_enabled) || false;
+        attemptImmediately = prefs.getBool(Reference.prefs_upload_immediately) || false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +48,9 @@ class _GeneralSettingsState extends State<GeneralSettingsPage> {
                     setState(() {
                       bgSvcActive = val;
                     });
+                    SharedPreferences.getInstance().then((prefs) {
+                      prefs.setBool(Reference.prefs_bg_enabled, bgSvcActive);
+                    }).then((value) => UploadManager.setupTasks());
                   },
                 )
               ],
@@ -49,6 +66,9 @@ class _GeneralSettingsState extends State<GeneralSettingsPage> {
                   onChanged: (val) {
                     setState(() {
                       attemptImmediately = val;
+                    });
+                    SharedPreferences.getInstance().then((prefs) {
+                      prefs.setBool(Reference.prefs_upload_immediately, attemptImmediately);
                     });
                   },
                 )

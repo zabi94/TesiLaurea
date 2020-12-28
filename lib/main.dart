@@ -25,7 +25,7 @@ void main() async {
         child: AppContainer(),
       )
   );
-  UploadManager.configure();
+  UploadManager.setupTasks();
   DatabaseInterface.instance.getPendingUploads().then((list) {
     list.forEach((pr) {
       print(pr.getFilePath());

@@ -10,6 +10,8 @@ class Reference {
   static const String prefs_username = "Username";
   static const String prefs_password = "Password";
   static const String prefs_saved = "SavedOnce";
+  static const String prefs_bg_enabled = "BgTasksEnabled";
+  static const String prefs_upload_immediately = "UploadImmediately";
 
   static bool isAndroid11 = false;
 
