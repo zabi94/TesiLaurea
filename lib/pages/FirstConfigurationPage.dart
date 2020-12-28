@@ -72,104 +72,106 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
   }
 
   Widget _getContent() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                onEditingComplete: () {
-                  //Todo check url format
-                },
-                autofocus: true,
-                enableSuggestions: false,
-                controller: serverFieldController,
-                maxLines: 1,
-                autocorrect: false,
-                keyboardType: TextInputType.url,
-                decoration: InputDecoration(
-                    labelText: 'Inserisci il server di destinazione'
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  onEditingComplete: () {
+                    //Todo check url format
+                  },
+                  autofocus: true,
+                  enableSuggestions: false,
+                  controller: serverFieldController,
+                  maxLines: 1,
+                  autocorrect: false,
+                  keyboardType: TextInputType.url,
+                  decoration: InputDecoration(
+                      labelText: 'Inserisci il server di destinazione'
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                onEditingComplete: () {
-                  //Todo check port format
-                },
-                autofocus: false,
-                enableSuggestions: false,
-                controller: portFieldController,
-                maxLines: 1,
-                autocorrect: false,
-                keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
-                decoration: InputDecoration(
-                    labelText: 'Inserisci la porta di destinazione'
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  onEditingComplete: () {
+                    //Todo check port format
+                  },
+                  autofocus: false,
+                  enableSuggestions: false,
+                  controller: portFieldController,
+                  maxLines: 1,
+                  autocorrect: false,
+                  keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
+                  decoration: InputDecoration(
+                      labelText: 'Inserisci la porta di destinazione'
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                autofocus: false,
-                enableSuggestions: false,
-                controller: usernameFieldController,
-                maxLines: 1,
-                autocorrect: false,
-                keyboardType: TextInputType.name,
-                decoration: InputDecoration(
-                    labelText: 'Nome utente'
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  autofocus: false,
+                  enableSuggestions: false,
+                  controller: usernameFieldController,
+                  maxLines: 1,
+                  autocorrect: false,
+                  keyboardType: TextInputType.name,
+                  decoration: InputDecoration(
+                      labelText: 'Nome utente'
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                onEditingComplete: () {
-                  //Todo check port format
-                },
-                autofocus: false,
-                enableSuggestions: false,
-                controller: passwordFieldController,
-                maxLines: 1,
-                autocorrect: false,
-                obscureText: true,
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                    labelText: firstConfig?'Password':'Password (Vuoto se non modificata)'
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  onEditingComplete: () {
+                    //Todo check port format
+                  },
+                  autofocus: false,
+                  enableSuggestions: false,
+                  controller: passwordFieldController,
+                  maxLines: 1,
+                  autocorrect: false,
+                  obscureText: true,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                      labelText: firstConfig?'Password':'Password (Vuoto se non modificata)'
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: OutlineButton(
-            onPressed: () async {
-              setState(() {
-                _loading = true;
-              });
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.setString(Reference.prefs_server, serverFieldController.value.text);
-              await prefs.setInt(Reference.prefs_port, int.tryParse(portFieldController.value.text));
-              if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
-                await prefs.setString(Reference.prefs_password, passwordFieldController.text);
-              }
-              await prefs.setString(Reference.prefs_username, usernameFieldController.text);
-              await prefs.setBool(Reference.prefs_saved, true);
-              setState(() {
-                _loading = false;
-              });
-              Navigator.of(context).pushReplacementNamed("/");
-            },
-            child: Text("Completa Configurazione"),
+            ],
           ),
-        )
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: OutlineButton(
+              onPressed: () async {
+                setState(() {
+                  _loading = true;
+                });
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setString(Reference.prefs_server, serverFieldController.value.text);
+                await prefs.setInt(Reference.prefs_port, int.tryParse(portFieldController.value.text));
+                if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
+                  await prefs.setString(Reference.prefs_password, passwordFieldController.text);
+                }
+                await prefs.setString(Reference.prefs_username, usernameFieldController.text);
+                await prefs.setBool(Reference.prefs_saved, true);
+                setState(() {
+                  _loading = false;
+                });
+                Navigator.of(context).pushReplacementNamed("/");
+              },
+              child: Text("Completa Configurazione"),
+            ),
+          )
+        ],
+      ),
     );
   }
 
