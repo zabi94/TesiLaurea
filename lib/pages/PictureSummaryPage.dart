@@ -144,10 +144,41 @@ class PictureSummaryPage extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Align(
-                                child: Text("LAT: ${record.getLatitude()}, LON: ${record.getLongitude()}"),
+                              padding: const EdgeInsets.all(12.0),
+                              child: Stack(
                                 alignment: Alignment.bottomCenter,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 3),
+                                    child: Align(
+                                      child: Text("LAT: ${record.getLatitude()}, LON: ${record.getLongitude()}"),
+                                      alignment: Alignment.bottomCenter,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: FutureBuilder(
+                                      future: context.watch<DatabaseInterface>().getByPath(record.getFilePath()),
+                                      builder: (ctx, snap) {
+                                        Icon ico = Icon(Icons.cloud, color: Colors.grey, key: UniqueKey(),);
+                                        if (snap.hasData) {
+                                          if (snap.data.uploadedTo != null && snap.data.uploadedTo.isNotEmpty) {
+                                            ico = Icon(Icons.cloud_done, color: Colors.green, key: UniqueKey(),);
+                                          } else {
+                                            ico = Icon(Icons.cloud_upload, color: Colors.orangeAccent, key: UniqueKey(),);
+                                          }
+                                        }
+                                        return Hero(
+                                          tag: "status-icon_${record.getFilePath()}",
+                                          child: AnimatedSwitcher(
+                                            child: ico,
+                                            duration: Duration(milliseconds: 200),
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  )
+                                ],
                               ),
                             )
                           ],

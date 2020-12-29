@@ -58,6 +58,13 @@ class DatabaseInterface with ChangeNotifier {
         .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
   }
 
+  Future<PictureRecord> getByPath(String path) {
+    return _db.then((db) => db.query("pictures", limit: 1, where: "fileRef = ?", whereArgs: [path])
+        .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])))
+        .then((list) => list.isEmpty ? Future.error("Not found") : Future.value(list[0]))
+    );
+  }
+
   Future<List<PictureRecord>> getAllPictures() async {
     return _db.then((db) => db.query("pictures", orderBy: "-rowid"))
         .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])));
