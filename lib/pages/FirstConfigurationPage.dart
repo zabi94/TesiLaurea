@@ -14,9 +14,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
   TextEditingController serverFieldController = TextEditingController(
     text: "https://"
   );
-  TextEditingController portFieldController = TextEditingController(
-      text: "443"
-  );
   TextEditingController usernameFieldController = TextEditingController();
   TextEditingController passwordFieldController = TextEditingController();
 
@@ -26,7 +23,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
   @override
   void dispose() {
     serverFieldController.dispose();
-    portFieldController.dispose();
     usernameFieldController.dispose();
     passwordFieldController.dispose();
     super.dispose();
@@ -38,7 +34,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         serverFieldController.text = prefs.getString(Reference.prefs_server);
-        portFieldController.text = "${prefs.getInt(Reference.prefs_port)}";
         usernameFieldController.text = prefs.getString(Reference.prefs_username);
         firstConfig = !prefs.getBool(Reference.prefs_saved);
       });
@@ -99,23 +94,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
-                  onEditingComplete: () {
-                    //Todo check port format
-                  },
-                  autofocus: false,
-                  enableSuggestions: false,
-                  controller: portFieldController,
-                  maxLines: 1,
-                  autocorrect: false,
-                  keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
-                  decoration: InputDecoration(
-                      labelText: 'Inserisci la porta di destinazione'
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
                   autofocus: false,
                   enableSuggestions: false,
                   controller: usernameFieldController,
@@ -156,7 +134,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
                 });
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setString(Reference.prefs_server, serverFieldController.value.text);
-                await prefs.setInt(Reference.prefs_port, int.tryParse(portFieldController.value.text));
                 if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
                   await prefs.setString(Reference.prefs_password, passwordFieldController.text);
                 }

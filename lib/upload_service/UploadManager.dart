@@ -11,7 +11,7 @@ class UploadManager {
 
   static Future<int> _uploadPending(String id) async {
     int completedSuccesfully = 0;
-    String destinationUrl = await _getDestinationUrl();
+    String destinationUrl = await _getUploadUrl();
     List<UploadJob> jobs = (await DatabaseInterface.instance.getPendingUploads())
         .map((e) => UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude())).toList();
 
@@ -41,7 +41,11 @@ class UploadManager {
   }
   
   static Future<bool> _performUploadJob(UploadJob j) {
-    return _getDestinationUrl().then((destinationUrl) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
+    return _getUploadUrl().then((destinationUrl) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
+        .catchError((err) {
+          print("Error getting http response:\n$err");
+          return Future.value(false);
+        })
         .then((response) {
           if (response.statusCode ~/ 100 == 2) {
             return DatabaseInterface.instance.complete(j, destinationUrl);
@@ -53,8 +57,8 @@ class UploadManager {
     );
   }
   
-  static Future<String> _getDestinationUrl() async {
-    return "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}:${(await SharedPreferences.getInstance()).getInt(Reference.prefs_port)}";
+  static Future<String> _getUploadUrl() async {
+    return "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}";
   }
 
   static Object _toStringList(Object index, Object list) {

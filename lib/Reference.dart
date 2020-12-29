@@ -6,7 +6,6 @@ class Reference {
   static const String appTitle = "Image Tagger";
 
   static const String prefs_server = "SelectedServer";
-  static const String prefs_port = "SelectedPort";
   static const String prefs_username = "Username";
   static const String prefs_password = "Password";
   static const String prefs_saved = "SavedOnce";

@@ -30,7 +30,7 @@ class _HomepageState extends State<Homepage> {
     SharedPreferences.getInstance().then((prefs) {
       setState(() {
         username = prefs.getString(Reference.prefs_username);
-        server = "${prefs.getString(Reference.prefs_server)}:${prefs.getInt(Reference.prefs_port)}";
+        server = "${prefs.getString(Reference.prefs_server)}";
       });
     });
   }
