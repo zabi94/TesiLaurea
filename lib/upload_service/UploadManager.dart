@@ -58,7 +58,7 @@ class UploadManager {
   }
   
   static Future<String> _getUploadUrl() async {
-    return "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}";
+    return "${(await SharedPreferences.getInstance()).getString(Reference.prefs_server)}/upload";
   }
 
   static Object _toStringList(Object index, Object list) {
