@@ -15,12 +15,23 @@ class InfoPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16),
                   child: InkWell(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Icon(Icons.label, size: 170, color: Colors.orange,),//TODO cambiare con l'icona dell'app
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: CircleAvatar(
+                            backgroundImage: AssetImage(
+                              'assets/images/logo.png',
+                            ),
+                            minRadius: 65,
+                            maxRadius: 65,
+                            foregroundColor: Colors.transparent,
+                            backgroundColor: Colors.orangeAccent,
+                          )
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.asset('assets/images/uniud.png', height: 130, width: 130,),
@@ -41,18 +52,20 @@ class InfoPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: Text("Image Tagger", textScaleFactor: 2,),
+                  padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 16),
+                  child: FittedBox(
+                    child: Text("Image Tagger", textScaleFactor: 100,),
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: 20,),
                 Text("Applicazione sviluppata come progetto di tesi da", textScaleFactor: 1.2, textAlign: TextAlign.center,),
                 Padding(
                   padding: const EdgeInsets.all(18.0),
