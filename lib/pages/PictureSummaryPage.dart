@@ -6,6 +6,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:provider/provider.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/PictureSummaryCard.dart';
 
 class PictureSummaryPage extends StatelessWidget {
 
@@ -15,7 +16,6 @@ class PictureSummaryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScrollController scroller = ScrollController();
     return Scaffold(
       appBar: AppBar(
         title: Text(Reference.appTitle),
@@ -53,8 +53,7 @@ class PictureSummaryPage extends StatelessWidget {
                 if (Reference.isAndroid11) return SizedBox(width: 0, height: 0,);
                 return IconButton(
                   onPressed: () async {
-                    GallerySaver.saveImage(
-                        record.getFilePath(), albumName: "ImageTagger").then((value) {
+                    GallerySaver.saveImage(record.getFilePath(), albumName: "ImageTagger").then((value) {
                       Scaffold.of(newContext).showSnackBar(SnackBar(
                         duration: Duration(seconds: 3),
                         content: Row(
@@ -107,86 +106,7 @@ class PictureSummaryPage extends StatelessWidget {
               ),
               Expanded(
                 flex: 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 8,),
-                    Expanded(
-                      child: Card(
-                        elevation: 8,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Wrap(
-                                  direction: Axis.horizontal,
-                                  alignment: WrapAlignment.center,
-                                  children: record.getChipTags(),
-                                  spacing: 5.0,
-                                )
-                            ),
-                            Expanded(
-                              child: Scrollbar(
-                                isAlwaysShown: true,
-                                controller: scroller,
-                                thickness: 10,
-                                child: SingleChildScrollView(
-                                  controller: scroller,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child: Align(
-                                      child: record.getTextDescription(),
-                                      alignment: Alignment.centerLeft,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Stack(
-                                alignment: Alignment.bottomCenter,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 3),
-                                    child: Align(
-                                      child: Text("LAT: ${record.getLatitude()}, LON: ${record.getLongitude()}"),
-                                      alignment: Alignment.bottomCenter,
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: FutureBuilder(
-                                      future: context.watch<DatabaseInterface>().getByPath(record.getFilePath()),
-                                      builder: (ctx, snap) {
-                                        Icon ico = Icon(Icons.cloud, color: Colors.grey, key: UniqueKey(),);
-                                        if (snap.hasData) {
-                                          if (snap.data.uploadedTo != null && snap.data.uploadedTo.isNotEmpty) {
-                                            ico = Icon(Icons.cloud_done, color: Colors.green, key: UniqueKey(),);
-                                          } else {
-                                            ico = Icon(Icons.cloud_upload, color: Colors.orangeAccent, key: UniqueKey(),);
-                                          }
-                                        }
-                                        return Hero(
-                                          tag: "status-icon_${record.getFilePath()}",
-                                          child: AnimatedSwitcher(
-                                            child: ico,
-                                            duration: Duration(milliseconds: 200),
-                                          ),
-                                        );
-                                      },
-                                    )
-                                  )
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                child: PictureSummaryCard(record),
               ),
             ],
           ),
