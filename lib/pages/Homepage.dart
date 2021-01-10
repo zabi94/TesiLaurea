@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/DrawerGestureNavigator.dart';
 import 'package:tesi_simone_zanin_140833/pages/ErrorPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
@@ -22,19 +23,10 @@ class _HomepageState extends State<Homepage> {
       initialPage: 0,
   );
 
-  String username = "", server = "";
 
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((prefs) {
-      String un = prefs.getString(Reference.prefs_username);
-      String sv = prefs.getString(Reference.prefs_server);
-      setState(() {
-        username = un == null ? "" : un;
-        server = sv == null ? "" : sv;
-      });
-    });
   }
 
   @override
@@ -88,14 +80,34 @@ class _HomepageState extends State<Homepage> {
                     ),
                   ),
                   SizedBox(height: 2,),
-                  Text(username, textScaleFactor: 1.4,),
+                  FutureBuilder(
+                    future: context.watch<SettingsInterface>().getUser(),
+                    builder: (ctx, snap) {
+                      if (snap.hasData) {
+                        return Text(snap.data, textScaleFactor: 1.4, maxLines: 1, overflow: TextOverflow.ellipsis,);
+                      }
+                      return Text("Caricamento...");
+                    },
+                  ),
                   SizedBox(height: 15,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Icon(Icons.cloud_upload),
-                      Text(server),
-                    ],
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Icon(Icons.cloud_upload),
+                        SizedBox(width: 10,),
+                        FutureBuilder(
+                          future: context.watch<SettingsInterface>().getServer(),
+                          builder: (ctx, snap) {
+                            if (snap.hasData) {
+                              return Text(snap.data, textScaleFactor: 1.4, maxLines: 1, overflow: TextOverflow.ellipsis,);
+                            }
+                            return Text("Caricamento...");
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               )

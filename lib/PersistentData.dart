@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
 
 class DatabaseInterface with ChangeNotifier {
@@ -156,6 +158,31 @@ class PictureRecord {
 
   double getLongitude() {
     return _lon;
+  }
+
+}
+
+class SettingsInterface with ChangeNotifier {
+
+  static SettingsInterface _instance;
+
+  static SettingsInterface get instance {
+    if (_instance == null) {
+      _instance = SettingsInterface();
+    }
+    return _instance;
+  }
+
+  Future<String> getServer() async {
+    return SharedPreferences.getInstance().then((prefs) => prefs.getString(Reference.prefs_server));
+  }
+
+  Future<String> getUser() async {
+    return SharedPreferences.getInstance().then((prefs) => prefs.getString(Reference.prefs_username));
+  }
+
+  void changed() {
+    notifyListeners();
   }
 
 }

@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gallery_saver/files.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/ConnectionUtils.dart';
@@ -155,6 +156,7 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
               fss.read(key: Reference.prefs_password).then((value) => print("read stored passwd: $value"));
             });
           }
+          SettingsInterface.instance.changed();
           setState(() {
             _loading = false;
           });

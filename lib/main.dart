@@ -20,7 +20,8 @@ void main() async {
   runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => DatabaseInterface.instance)
+          ChangeNotifierProvider(create: (_) => DatabaseInterface.instance),
+          ChangeNotifierProvider(create: (_) => SettingsInterface.instance)
         ],
         child: AppContainer(),
       )
