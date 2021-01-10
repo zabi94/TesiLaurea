@@ -15,12 +15,12 @@ class UploadManager {
     List<UploadJob> jobs = (await DatabaseInterface.instance.getPendingUploads())
         .map((e) => UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude())).toList();
 
-    List<Future<bool>> futures = jobs.map((j) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
+    List<Future<bool>> futures = jobs.map((j) => _performUploadJob(j)
         .then((response) {
-          if (response.statusCode ~/ 100 == 2) {
+          if (response ~/ 100 == 2) {
             return DatabaseInterface.instance.complete(j, destinationUrl);
           } else {
-            print("Error: status code was ${response.statusCode} from $destinationUrl");
+            print("Error: status code was $response from $destinationUrl");
             return Future.value(false);
           }
         })
@@ -35,25 +35,18 @@ class UploadManager {
         .then((value) => Future.value(completedSuccesfully));
   }
 
-  static Future<bool> uploadSingleJob(PictureRecord e) {
+  static Future<int> uploadSingleJob(PictureRecord e) {
     UploadJob job = UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude());
     return _performUploadJob(job);
   }
   
-  static Future<bool> _performUploadJob(UploadJob j) {
+  static Future<int> _performUploadJob(UploadJob j) {
     return _getUploadUrl().then((destinationUrl) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
         .catchError((err) {
           print("Error getting http response:\n$err");
           return Future.value(false);
         })
-        .then((response) {
-          if (response.statusCode ~/ 100 == 2) {
-            return DatabaseInterface.instance.complete(j, destinationUrl);
-          } else {
-            print("Error: status code was ${response.statusCode} from $destinationUrl");
-            return Future.value(false);
-          }
-        })
+        .then((response) => DatabaseInterface.instance.complete(j, destinationUrl).then((value) => response.statusCode))
     );
   }
   
