@@ -149,7 +149,8 @@ class _TakePictureState extends State<TakePicturePage> {
     Navigator.of(context).pop();
     SharedPreferences.getInstance()
         .then((prefs) {
-          if (prefs.getBool(Reference.prefs_upload_immediately)) {
+          bool imm = prefs.getBool(Reference.prefs_upload_immediately);
+          if (imm == null || imm) {
             dbEntry.then((entry) => UploadManager.uploadSingleJob(entry));
           }
         }
