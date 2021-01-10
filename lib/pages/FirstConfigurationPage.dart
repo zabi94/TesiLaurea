@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:gallery_saver/files.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -149,7 +150,10 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
           prefs.setString(Reference.prefs_username, usernameFieldController.text);
           prefs.setBool(Reference.prefs_saved, true);
           if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
-            prefs.setString(Reference.prefs_password, passwordFieldController.text);
+            FlutterSecureStorage fss = FlutterSecureStorage();
+            fss.write(key: Reference.prefs_password, value: passwordFieldController.text,).then((_) {
+              fss.read(key: Reference.prefs_password).then((value) => print("read stored passwd: $value"));
+            });
           }
           setState(() {
             _loading = false;

@@ -28,9 +28,11 @@ class _HomepageState extends State<Homepage> {
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((prefs) {
+      String un = prefs.getString(Reference.prefs_username);
+      String sv = prefs.getString(Reference.prefs_server);
       setState(() {
-        username = prefs.getString(Reference.prefs_username);
-        server = "${prefs.getString(Reference.prefs_server)}";
+        username = un == null ? "" : un;
+        server = sv == null ? "" : sv;
       });
     });
   }

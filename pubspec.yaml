@@ -35,6 +35,7 @@ dependencies:
   provider: ^4.3.2+3 #Ability to watch changes in the db
   location: ^3.1.0 #Ability to locate device through GPS
   background_fetch: ^0.6.0 #Ability to create background tasks
+  flutter_secure_storage: ^3.3.5 #Secure password storage
 
 dev_dependencies:
   flutter_test:
