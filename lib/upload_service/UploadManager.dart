@@ -97,7 +97,8 @@ class UploadManager {
 
   static void setupTasks() {
     SharedPreferences.getInstance().then((prefs) {
-      if (prefs.getBool(Reference.prefs_bg_enabled) || false) {
+      bool bg = prefs.getBool(Reference.prefs_bg_enabled);
+      if (bg == null ? true : bg) {
         _enableBackgroundTasks();
       } else {
         _disableBackgroundTasks();

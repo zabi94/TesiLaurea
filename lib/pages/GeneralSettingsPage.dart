@@ -20,9 +20,11 @@ class _GeneralSettingsState extends State<GeneralSettingsPage> {
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((prefs) {
+      bool svc = prefs.getBool(Reference.prefs_bg_enabled);
+      bool imm = prefs.getBool(Reference.prefs_upload_immediately);
       setState(() {
-        bgSvcActive = prefs.getBool(Reference.prefs_bg_enabled) || false;
-        attemptImmediately = prefs.getBool(Reference.prefs_upload_immediately) || false;
+        bgSvcActive = svc == null ? true : svc;
+        attemptImmediately =  imm == null ? true : imm;
       });
     });
   }
