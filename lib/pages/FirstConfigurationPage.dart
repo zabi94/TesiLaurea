@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:gallery_saver/files.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
@@ -136,6 +134,15 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
     );
   }
 
+  Future<String> getEffectivePassword() {
+    if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
+      return Future.value(passwordFieldController.text);
+    } else {
+      FlutterSecureStorage fss = FlutterSecureStorage();
+      return fss.read(key: Reference.prefs_password);
+    }
+  }
+
   void _saveConfig(BuildContext context) {
 
     if (_loading) return;
@@ -143,43 +150,61 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
     setState(() {
       _loading = true;
     });
-    ConnectionUtils.probe(serverFieldController.value.text).timeout(Duration(seconds: 5), onTimeout:  () => false)
+    ConnectionUtils.probe(serverFieldController.value.text)
+        .timeout(Duration(seconds: 5), onTimeout:  () => false)
         .then((validServer) {
-      if (validServer) {
-        SharedPreferences.getInstance().then((prefs) {
-          prefs.setString(Reference.prefs_server, serverFieldController.value.text);
-          prefs.setString(Reference.prefs_username, usernameFieldController.text);
-          prefs.setBool(Reference.prefs_saved, true);
-          if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
-            FlutterSecureStorage fss = FlutterSecureStorage();
-            fss.write(key: Reference.prefs_password, value: passwordFieldController.text,).then((_) {
-              fss.read(key: Reference.prefs_password).then((value) => print("read stored passwd: $value"));
+          getEffectivePassword().then((pass) {
+            ConnectionUtils.auth(serverFieldController.value.text, usernameFieldController.text, pass).then((validUser) {
+
+              if (!validServer)  {
+                setState(() {
+                  _loading = false;
+                });
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  duration: Duration(seconds: 10),
+                  action: SnackBarAction(
+                    label: "Capito",
+                    onPressed: () => _scaffoldKey.currentState.removeCurrentSnackBar(),
+                  ),
+                  content: Text("Il server non è disponibile"),
+                ));
+              } else if (!validUser) {
+                setState(() {
+                  _loading = false;
+                });
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                  duration: Duration(seconds: 10),
+                  action: SnackBarAction(
+                    label: "Capito",
+                    onPressed: () => _scaffoldKey.currentState.removeCurrentSnackBar(),
+                  ),
+                  content: Text("Username o password errati"),
+                ));
+              } else {
+                SharedPreferences.getInstance().then((prefs) {
+                  prefs.setString(Reference.prefs_server, serverFieldController.value.text);
+                  prefs.setString(Reference.prefs_username, usernameFieldController.text);
+                  prefs.setBool(Reference.prefs_saved, true);
+                  if (firstConfig || (passwordFieldController.text != null && passwordFieldController.text.isNotEmpty)) {
+                    FlutterSecureStorage fss = FlutterSecureStorage();
+                    fss.write(key: Reference.prefs_password, value: passwordFieldController.text,).then((_) {
+                      fss.read(key: Reference.prefs_password).then((value) => print("read stored passwd: $value"));
+                    });
+                  }
+                  SettingsInterface.instance.changed();
+                  setState(() {
+                    _loading = false;
+                  });
+                  if (firstConfig) {
+                    Navigator.of(context).pushReplacementNamed("/");
+                  } else {
+                    Navigator.pop(context);
+                  }
+                });
+              }
             });
-          }
-          SettingsInterface.instance.changed();
-          setState(() {
-            _loading = false;
           });
-          if (firstConfig) {
-            Navigator.of(context).pushReplacementNamed("/");
-          } else {
-            Navigator.pop(context);
-          }
         });
-      } else {
-        setState(() {
-          _loading = false;
-        });
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          duration: Duration(seconds: 10),
-          action: SnackBarAction(
-            label: "Capito",
-            onPressed: () => _scaffoldKey.currentState.removeCurrentSnackBar(),
-          ),
-          content: Text("Il server non è disponibile"),
-        ));
-      }
-    });
   }
 
 }
