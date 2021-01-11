@@ -62,7 +62,6 @@ class UploadManager {
             return DatabaseInterface.instance.complete(j, destinationUrl)
                 .then((value) => response.statusCode);
           } else {
-            print(response.);
             return response.statusCode;
           }
         })
