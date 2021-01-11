@@ -102,7 +102,6 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
                     onEditingComplete: () {
-                      //Todo check port format
                     },
                     autofocus: false,
                     enableSuggestions: false,

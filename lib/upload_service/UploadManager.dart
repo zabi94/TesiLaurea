@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:background_fetch/background_fetch.dart' as bg;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
@@ -40,13 +41,32 @@ class UploadManager {
     return _performUploadJob(job);
   }
   
-  static Future<int> _performUploadJob(UploadJob j) {
-    return _getUploadUrl().then((destinationUrl) => http.post(destinationUrl, body: j.getAsJson(), headers: {"Content-Type": "application/json"})
+  static Future<int> _performUploadJob(UploadJob j) async {
+
+    String username = await SharedPreferences.getInstance().then((prefs) => prefs.getString(Reference.prefs_username));
+    String password = await FlutterSecureStorage().read(key: Reference.prefs_password);
+
+    return _getUploadUrl().then((destinationUrl) => j.getAsJson()
+        .then((json) => http.post(destinationUrl, body: json, headers: {
+              "Content-Type": "application/json",
+              "ImageTaggerUser": username,
+              "ImageTaggerAuthentication": password
+            }
+          )
         .catchError((err) {
           print("Error getting http response:\n$err");
           return Future.value(false);
         })
-        .then((response) => DatabaseInterface.instance.complete(j, destinationUrl).then((value) => response.statusCode))
+        .then((response) {
+          if (response.statusCode ~/ 100 == 2) {
+            return DatabaseInterface.instance.complete(j, destinationUrl)
+                .then((value) => response.statusCode);
+          } else {
+            print(response.);
+            return response.statusCode;
+          }
+        })
+    )
     );
   }
   
