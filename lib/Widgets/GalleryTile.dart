@@ -41,6 +41,7 @@ class _GalleryTileState extends State<GalleryTile> {
   @override
   Widget build(BuildContext context) {
     List<Widget> chips = widget._record.getChipTags();
+    String desc = widget._record.getDescription();
     return Container(
       constraints: BoxConstraints(
           maxHeight: 250
@@ -70,7 +71,9 @@ class _GalleryTileState extends State<GalleryTile> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(widget._record.getDescription(), maxLines: 8, overflow: TextOverflow.fade,),
+                        child: desc == null || desc.isEmpty
+                            ? Text("Nessuna descrizione", textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodyText2.apply(fontStyle: FontStyle.italic, ),)
+                            : Text(desc, maxLines: 8, overflow: TextOverflow.ellipsis,),
                       ),
                     ),
                     UploadButton(widget._record.getFilePath()),
