@@ -7,6 +7,7 @@ import 'package:tesi_simone_zanin_140833/pages/ErrorPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GeneralSettingsPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
+import 'package:tesi_simone_zanin_140833/pages/UploadLogPage.dart';
 import '../Reference.dart';
 
 class Homepage extends StatefulWidget {
@@ -47,7 +48,7 @@ class _HomepageState extends State<Homepage> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           DrawerGestureNavigator(child: GalleryPage()),
-          DrawerGestureNavigator(child: ErrorPage(errorMessage: "Pagina non implementata: storico")),
+          DrawerGestureNavigator(child: UploadLogPage()),
           DrawerGestureNavigator(child: GeneralSettingsPage()),
           DrawerGestureNavigator(child: InfoPage()),
         ],

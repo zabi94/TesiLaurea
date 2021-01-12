@@ -37,25 +37,24 @@ class UploadButton extends StatelessWidget {
                 duration: Duration(seconds: 1),
               ));
               UploadManager.uploadSingleJob(snap.data)
-                  .catchError((err) {
+                  .then((value) {
+                    if (value ~/ 100 != 2) {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Caricamento fallito: $value"),
+                        duration: Duration(seconds: 5),
+                      ));
+                    } else {
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("Caricamento completato: $value"),
+                        duration: Duration(seconds: 5),
+                      ));
+                    }
+                  }).catchError((err) {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text("Errore durante il caricamento: $err"),
                       duration: Duration(seconds: 5),
                     ));
-                    return Future.error(err);
-              }).then((value) {
-                if (value ~/ 100 != 2) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Caricamento fallito: $value"),
-                    duration: Duration(seconds: 5),
-                  ));
-                } else {
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("Caricamento completato: $value"),
-                    duration: Duration(seconds: 5),
-                  ));
-                }
-              });
+                  });
             }
           },
         );

@@ -47,7 +47,6 @@ class DatabaseInterface with ChangeNotifier {
             }
           },
         ));
-    _db.then((db) => db.getVersion()).then((value) => print("Database opened, version $value"));
   }
 
   static DatabaseInterface get instance {
@@ -77,7 +76,13 @@ class DatabaseInterface with ChangeNotifier {
   Future<PictureRecord> getByPath(String path) async {
     return _db.then((db) => db.query("pictures", limit: 1, where: "fileRef = ?", whereArgs: [path])
         .then((maps) => List.generate(maps.length, (i) => PictureRecord.fromDb(maps[i])))
-        .then((list) => list.isEmpty ? Future.error("Not found") : Future.value(list[0]))
+        .then((list) {
+          if (list.isEmpty) {
+            throw "Not found";
+          } else {
+            return Future.value(list[0]);
+          }
+        })
     );
   }
 
