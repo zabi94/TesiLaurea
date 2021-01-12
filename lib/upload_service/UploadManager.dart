@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:background_fetch/background_fetch.dart' as bg;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
@@ -37,7 +38,7 @@ class UploadManager {
   }
 
   static Future<int> uploadSingleJob(PictureRecord e) {
-    UploadJob job = UploadJob(e.rowid, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude());
+    UploadJob job = UploadJob(e.picture_id, e.getFilePath(), jsonDecode(e.getJsonTags(), reviver: _toStringList), e.getDescription(), e.getLatitude(), e.getLongitude());
     return _performUploadJob(job);
   }
   
@@ -45,28 +46,38 @@ class UploadManager {
 
     String username = await SharedPreferences.getInstance().then((prefs) => prefs.getString(Reference.prefs_username));
     String password = await FlutterSecureStorage().read(key: Reference.prefs_password);
+    String server = await SharedPreferences.getInstance().then((value) => value.getString(Reference.prefs_server));
+    
+    UploadRecord ur = UploadRecord(j.pictureId, server, username);
 
-    return _getUploadUrl().then((destinationUrl) => j.getAsJson()
-        .then((json) => http.post(destinationUrl, body: json, headers: {
-              "Content-Type": "application/json",
-              "ImageTaggerUser": username,
-              "ImageTaggerAuthentication": password
-            }
-          )
-        .catchError((err) {
-          print("Error getting http response:\n$err");
-          return Future.value(false);
-        })
-        .then((response) {
-          if (response.statusCode ~/ 100 == 2) {
-            return DatabaseInterface.instance.complete(j, destinationUrl)
-                .then((value) => response.statusCode);
-          } else {
-            return response.statusCode;
-          }
-        })
-    )
-    );
+    String destination = await _getUploadUrl();
+    String jsonContent = await j.getAsJson();
+    Response response = await http.post(destination, body: jsonContent, headers: {
+                                  "Content-Type": "application/json",
+                                  "ImageTaggerUser": username,
+                                  "ImageTaggerAuthentication": password
+                                }).catchError((err) {
+                                  print("Error getting http response:\n$err");
+                                  ur.statusCode = -1;
+                                  ur.result = err.toString();
+                                  UploadListWatcher.instance.logUploadAttempt(ur);
+                                  return Future.error(err);
+                                });
+    int status = await Future.microtask(() {
+      ur.statusCode = response.statusCode;
+      if (response.statusCode ~/ 100 == 2) {
+        ur.result = "OK";
+        return DatabaseInterface.instance.complete(j, destination)
+            .then((value) => response.statusCode);
+      } else {
+        ur.result = "HTTP ERROR";
+        return response.statusCode;
+      }
+    }).whenComplete(() {
+      UploadListWatcher.instance.logUploadAttempt(ur);
+    });
+
+    return status;
   }
   
   static Future<String> _getUploadUrl() async {

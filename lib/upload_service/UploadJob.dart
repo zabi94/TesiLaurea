@@ -10,11 +10,12 @@ class UploadJob {
   String _description;
   double _latitude;
   double _longitude;
-  int _uploadId;
+  int _pictureId;
 
-  UploadJob(this._uploadId, this._imageFilePath, this._tags, this._description, this._latitude, this._longitude);
+  UploadJob(this._pictureId, this._imageFilePath, this._tags, this._description, this._latitude, this._longitude);
 
-  String getAsJson() {
+  Future<String> getAsJson() async {
+
     Map<String, dynamic> jsonRoot = {
       
       "imagePath": _imageFilePath,
@@ -22,13 +23,14 @@ class UploadJob {
       "description": _description,
       "latitude": _latitude,
       "longitude": _longitude,
-      "uploadId": _uploadId,
-      "imageBase64": base64Encode(File(_imageFilePath).readAsBytesSync())
+      "imageBase64": base64Encode(File(_imageFilePath).readAsBytesSync()),
       
     };
     return _jenc.convert(jsonRoot);
   }
 
   String get file => _imageFilePath;
+  
+  int get pictureId => _pictureId;
 
 }

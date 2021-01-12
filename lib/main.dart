@@ -17,11 +17,13 @@ import 'pages/ErrorPage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Reference.checkPlatform();
+  //todo initialize settings defaults
   runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => DatabaseInterface.instance),
-          ChangeNotifierProvider(create: (_) => SettingsInterface.instance)
+          ChangeNotifierProvider(create: (_) => SettingsInterface.instance),
+          ChangeNotifierProvider(create: (_) => UploadListWatcher.instance)
         ],
         child: AppContainer(),
       )

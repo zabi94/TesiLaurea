@@ -38,10 +38,11 @@ class UploadButton extends StatelessWidget {
               ));
               UploadManager.uploadSingleJob(snap.data)
                   .catchError((err) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text("Errore durante il caricamento: $err"),
-                  duration: Duration(seconds: 5),
-                ));
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      content: Text("Errore durante il caricamento: $err"),
+                      duration: Duration(seconds: 5),
+                    ));
+                    return Future.error(err);
               }).then((value) {
                 if (value ~/ 100 != 2) {
                   Scaffold.of(context).showSnackBar(SnackBar(
