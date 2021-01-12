@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/UploadButton.dart';
 
 class GalleryTile extends StatefulWidget {
 
@@ -72,26 +73,7 @@ class _GalleryTileState extends State<GalleryTile> {
                         child: Text(widget._record.getDescription(), maxLines: 8, overflow: TextOverflow.fade,),
                       ),
                     ),
-                    FutureBuilder(
-                      future: context.watch<DatabaseInterface>().getByPath(widget._record.getFilePath()),
-                      builder: (ctx, snap) {
-                        Widget wid = Icon(Icons.cloud, color: Colors.grey, key: UniqueKey(),);
-                        if (snap.hasData) {
-                          String uploadedTo = snap.data.uploadedTo;
-                          wid = Icon(Icons.cloud_upload, color: Colors.orangeAccent, key: UniqueKey(),);
-                          if (uploadedTo != null && uploadedTo.isNotEmpty) {
-                            wid = Icon(Icons.cloud_done, color: Colors.green, key: UniqueKey());
-                          }
-                        }
-                        return Hero(
-                          tag: "status-icon_${widget._record.getFilePath()}",
-                          child: AnimatedSwitcher(
-                            child: wid,
-                            duration: Duration(milliseconds: 200),
-                          ),
-                        );
-                      },
-                    )
+                    UploadButton(widget._record.getFilePath()),
                   ],
                   mainAxisAlignment: MainAxisAlignment.start,
                 ),
