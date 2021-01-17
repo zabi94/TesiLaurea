@@ -37,10 +37,11 @@ class _FirstConfigState extends State<FirstConfigurationPage> {
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((prefs) {
+      bool openedBefore = prefs.getBool(Reference.prefs_saved);
       setState(() {
         serverFieldController.text = prefs.getString(Reference.prefs_server);
         usernameFieldController.text = prefs.getString(Reference.prefs_username);
-        firstConfig = !prefs.getBool(Reference.prefs_saved);
+        firstConfig = openedBefore == null ? false : !openedBefore;
       });
     });
   }

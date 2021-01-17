@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/DrawerGestureNavigator.dart';
-import 'package:tesi_simone_zanin_140833/pages/ErrorPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GalleryPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/GeneralSettingsPage.dart';
 import 'package:tesi_simone_zanin_140833/pages/InfoPage.dart';
