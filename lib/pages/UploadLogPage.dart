@@ -9,16 +9,53 @@ class UploadLogPage extends StatelessWidget {
     return FutureBuilder(
       future: context.watch<UploadListWatcher>().getUploads(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return ListView.builder(
-            itemCount: snapshot.data.length ,
-            itemBuilder: (context, index) {
-              return UploadTile(snapshot.data[index]);
-            },
+        if (snapshot.hasError) {
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error, size: 64,),
+                SizedBox(height: 16,),
+                Text("Errore nell'apertura del registro!"),
+                SizedBox(height: 16,),
+                Text(snapshot.error.toString()),
+              ],
+            ),
           );
+        }
+        if (snapshot.hasData) {
+          if (snapshot.data.length > 0) {
+            return ListView.builder(
+              itemCount: snapshot.data.length ,
+              itemBuilder: (context, index) {
+                return UploadTile(snapshot.data[index]);
+              },
+            );
+          } else {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.all_inbox, size: 64,),
+                  SizedBox(height: 16,),
+                  Text("Nessun caricamento effettuato")
+                ],
+              ),
+            );
+          }
         } else {
           return Center(
-            child: Text("Caricamento registro..."),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16,),
+                Text("Caricamento registro in corso")
+              ],
+            ),
           );
         }
       },
