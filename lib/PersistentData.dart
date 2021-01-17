@@ -6,6 +6,7 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tesi_simone_zanin_140833/Reference.dart';
+import 'package:tesi_simone_zanin_140833/SqlQueries.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
 
 class DatabaseInterface with ChangeNotifier {
@@ -21,31 +22,22 @@ class DatabaseInterface with ChangeNotifier {
           version: 2,
           singleInstance: true,
           onCreate: (db, version) {
-            db.execute("CREATE TABLE pictures ("
-                "  picture_id INTEGER PRIMARY KEY,"
-                "  fileRef TEXT NOT NULL,"
-                "  uploadedTo TEXT,"
-                "  description TEXT,"
-                "  tags TEXT NOT NULL,"
-                "  latitude REAL NOT NULL,"
-                "  longitude REAL NOT NULL"
-                ");"
-            );
+            db.execute(SqlQueries.create_table_pictures)
+                .then((_) => print("Tabella pictures creata"))
+                .then((_) => db.execute(SqlQueries.create_table_uploads))
+                .then((_) => print("Tabella uploads creata"))
+                .then((_) => print("Creazione DB completata, versione $version"));
           },
           onUpgrade: (db, oldVersion, newVersion) {
-            if (oldVersion < 2 && newVersion > 1) {
-              print("Updating DB to version 2");
-              db.execute("CREATE TABLE uploads ("
-                  "  upload_id INTEGER PRIMARY KEY,"
-                  "  picture_id INTEGER NOT NULL REFERENCES pictures(picture_id),"
-                  "  statusCode INTEGER NOT NULL,"
-                  "  server TEXT NOT NULL,"
-                  "  user TEXT NOT NULL,"
-                  "  result TEXT NOT NULL,"
-                  "  time DATETIME NOT NULL"
-                  ");").then((value) => print("DB Update completed"));
-            }
-          },
+            print("Aggiornamento database da v$oldVersion a v$newVersion");
+
+            Future.microtask(() {
+              if (oldVersion < 2) {
+                db.execute(SqlQueries.create_table_uploads)
+                    .then((_) => print("Tabella uploads creata"));
+              }
+            }).then((_) => print("Update completato"));
+            },
         ));
   }
 
