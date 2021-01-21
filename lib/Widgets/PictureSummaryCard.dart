@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/UploadButton.dart';
-import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 
 class PictureSummaryCard extends StatelessWidget {
 
@@ -66,7 +65,7 @@ class PictureSummaryCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

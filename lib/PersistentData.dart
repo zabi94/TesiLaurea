@@ -127,29 +127,43 @@ class DatabaseInterface with ChangeNotifier {
 class UploadRecord {
   
   int rowid, upload_id, picture_id, statusCode;
-  String server, user, result, time;
-  
-  UploadRecord(this.picture_id, this.server, this.user, {this.rowid = -1, this.upload_id = -1, this.time = "now()", this.result="Not attempted", this.statusCode = -1});
-  
+  String server, user, result;
+  DateTime time;
+  String filePath;
+
+  UploadRecord(this.picture_id, this.server, this.user, this.filePath, {this.rowid = -1, this.upload_id = -1, this.result="Not attempted", this.statusCode = -1, this.time});
+
   bool isSuccessful() {
     return statusCode > 0 && statusCode ~/ 100 == 2;
   }
   
   Map<String, dynamic> toMap() {
+
+    if (time == null || !(time is DateTime)) return {
+      "picture_id": picture_id,
+      "statusCode": statusCode,
+      "server": server,
+      "user": user,
+      "result": result,
+      "filePath": filePath,
+      "time": DateTime(1970).toIso8601String()
+    };
+
     return {
       "picture_id": picture_id,
       "statusCode": statusCode,
       "server": server,
       "user": user,
       "result": result,
-      "time": time
+      "filePath": filePath,
+      "time": time.toIso8601String()
     };
   }
 
   static UploadRecord fromDb(Map<String, dynamic> map) {
-    return UploadRecord(map['picture_id'], map['server'], map['user'], result: map['result'], rowid: map['rowid'], upload_id: map['upload_id'], time: map['time'], statusCode: map['statusCode'],);
+    return UploadRecord(map['picture_id'], map['server'], map['user'], map['filePath'], result: map['result'], rowid: map['rowid'], upload_id: map['upload_id'], time: DateTime.tryParse(map['time']), statusCode: map['statusCode'],);
   }
-  
+
 }
 
 

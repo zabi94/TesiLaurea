@@ -46,7 +46,7 @@ class UploadManager {
     String password = await FlutterSecureStorage().read(key: Reference.prefs_password);
     String destination = await _getUploadUrl();
     
-    UploadRecord ur = UploadRecord(j.pictureId, destination, username);
+    UploadRecord ur = UploadRecord(j.pictureId, destination, username, j.file, time: DateTime.now());
 
     String jsonContent = await j.getAsJson();
     return http.post(destination, body: jsonContent, headers: {

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
@@ -71,51 +73,73 @@ class UploadTile extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            record.isSuccessful()
-                ? Icon(Icons.check)
-                : Icon(Icons.error_outline),
-            SizedBox(width: 18,),
             Expanded(
+              flex: 2,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Image.file(
+                    File(record.filePath),
+                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                      if (wasSynchronouslyLoaded || frame == 0) return child;
+                      return Icon(Icons.timer);
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.error, color: Colors.red,);
+                    },
+                    fit: BoxFit.cover, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+                    height: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+                    width: double.infinity, //Necessario per il crop centrale per evitare le bandine dell'aspect ratio non 1:1
+                ),
+              ),
+            ),
+            SizedBox(width: 10,),
+            Expanded(
+              flex: 6,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Upload #${record.upload_id} per l'immagine ${record.picture_id}", textScaleFactor: 1.1,),
+                  Text("Upload #${record.upload_id}", textScaleFactor: 1.15,),
                   SizedBox(height: 5,),
                   Text("User: ${record.user}", maxLines: 1, overflow: TextOverflow.fade,),
-                  Text("Data: ${record.time}", maxLines: 1, overflow: TextOverflow.fade,),
+                  Text("Data: ${record.time.day}/${record.time.month}/${record.time.year}, ${record.time.hour}:${record.time.minute}", maxLines: 1, overflow: TextOverflow.fade,),
                   Text("Server: ${record.server}",)
                 ],
               ),
             ),
-            SizedBox(width: 18,),
-            record.isSuccessful() ? SizedBox(width: 1, height: 1,) : IconButton(
-              icon: Icon(Icons.open_in_new),
-              onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text("Dettagli errore"),
-                        actions: [
-                          TextButton(
-                            child: Text("OK"),
-                            onPressed: () => Navigator.pop(context),
-                          )
-                        ],
-                        content: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(record.result),
-                            SizedBox(height: 20,),
-                            Text(getStatusCodeDescription(record.statusCode)),
+            SizedBox(width: 10,),
+            Expanded(
+              flex: 1,
+              child: record.isSuccessful()
+                  ? Icon(Icons.check, color: Colors.green,)
+                  : IconButton(
+                icon: Icon(Icons.open_in_new, color: Colors.red,),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text("Dettagli errore"),
+                          actions: [
+                            TextButton(
+                              child: Text("OK"),
+                              onPressed: () => Navigator.pop(context),
+                            )
                           ],
-                        ),
-                      );
-                    }
-                );
-              },
+                          content: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(record.result),
+                              SizedBox(height: 20,),
+                              Text(getStatusCodeDescription(record.statusCode)),
+                            ],
+                          ),
+                        );
+                      }
+                  );
+                },
+              ),
             ),
           ],
         ),

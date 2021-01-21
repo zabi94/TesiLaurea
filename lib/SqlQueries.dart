@@ -12,11 +12,12 @@ class SqlQueries {
   static const String create_table_uploads = "CREATE TABLE uploads ("
       "  upload_id INTEGER PRIMARY KEY,"
       "  picture_id INTEGER NOT NULL REFERENCES pictures(picture_id),"
+      "  filePath TEXT NOT NULL,"
       "  statusCode INTEGER NOT NULL,"
       "  server TEXT NOT NULL,"
       "  user TEXT NOT NULL,"
       "  result TEXT NOT NULL,"
-      "  time DATETIME NOT NULL"
+      "  time TEXT NOT NULL"
       ");";
 
 }
