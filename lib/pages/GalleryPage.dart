@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/EmptyScreenIndicator.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/GalleryTile.dart';
 
 class GalleryPage extends StatelessWidget {
@@ -13,7 +14,10 @@ class GalleryPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<PictureRecord> imageRecords = snapshot.data;
-          if (imageRecords.isEmpty) return _getEmptyGridView();
+          if (imageRecords.isEmpty) return EmptyScreenIndicator(
+            icon: Icons.upload_rounded,
+            message: "Nessuna foto caricata\nAcquisisci e carica una foto per vederla qui!"
+          );
           return _getCardList(imageRecords);
         }
         return _getLoadingSpinner();
@@ -25,20 +29,6 @@ class GalleryPage extends StatelessWidget {
     return ListView.builder(
       itemCount: imageRecords.length,
       itemBuilder: (ctx, id) => GalleryTile(imageRecords[id], key: ValueKey(imageRecords[id].getFilePath()),),
-    );
-  }
-
-  Widget _getEmptyGridView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.upload_rounded, size: 80, color: Colors.black38,),
-          SizedBox(height: 20,),
-          Text("Nessuna foto caricata"),
-          Text("Acquisisci e carica una foto per vederla qui!")
-        ],
-      ),
     );
   }
 

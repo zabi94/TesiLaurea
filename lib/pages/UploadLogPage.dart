@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tesi_simone_zanin_140833/PersistentData.dart';
+import 'package:tesi_simone_zanin_140833/Widgets/EmptyScreenIndicator.dart';
 
 class UploadLogPage extends StatelessWidget {
 
@@ -33,16 +34,9 @@ class UploadLogPage extends StatelessWidget {
               },
             );
           } else {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.all_inbox, size: 64,),
-                  SizedBox(height: 16,),
-                  Text("Nessun caricamento effettuato")
-                ],
-              ),
+            return EmptyScreenIndicator(
+              icon: Icons.all_inbox,
+              message: "Nessun upload effettuato.",
             );
           }
         } else {
