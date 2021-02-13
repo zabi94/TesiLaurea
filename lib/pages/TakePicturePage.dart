@@ -14,7 +14,6 @@ import 'package:tesi_simone_zanin_140833/Reference.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/AvoidKeyboardWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/BlinkingWidget.dart';
 import 'package:tesi_simone_zanin_140833/Widgets/TagWidget.dart';
-import 'package:tesi_simone_zanin_140833/upload_service/UploadJob.dart';
 import 'package:tesi_simone_zanin_140833/upload_service/UploadManager.dart';
 
 class TakePicturePage extends StatefulWidget {
@@ -31,10 +30,12 @@ class TakePicturePage extends StatefulWidget {
 class _TakePictureState extends State<TakePicturePage> {
 
   TextEditingController controller = TextEditingController();
+  TextEditingController promptController = TextEditingController();
 
   PickedFile _file;
   List<TagWidget> tags = [];
   List<bool> states = [];
+  List<TagWidget> extraTags = [];
   bool _gpsFixed = false;
   bool _gpsFailed = false;
   double longitude, latitude;
@@ -134,10 +135,55 @@ class _TakePictureState extends State<TakePicturePage> {
     return states[index];
   }
 
+  void promptNewTagName(int index, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text("Inserisci un nuovo tag"),
+          actions: [
+            FlatButton(
+              child: Text("Annulla"),
+              onPressed: () {
+                promptController.clear();
+                Navigator.of(ctx).pop();
+              },
+            ),
+            FlatButton(
+              child: Text("Conferma"),
+              onPressed: () {
+                if (!extraTags.any((element) => element.label == promptController.text)) {
+                  String content = promptController.text;
+                  setState(() {
+                    extraTags.add(TagWidget(content, (index) => true, (state, index) => removeExtraTag(content), index));
+                  });
+                  promptController.clear();
+                  Navigator.of(ctx).pop();
+                }
+              },
+            )
+          ],
+          content: TextField(
+            controller: promptController,
+          ),
+        );
+      }
+    );
+
+
+  }
+
+  void removeExtraTag(String tag) {
+    setState(() {
+      extraTags.removeWhere((element) => element.label == tag);
+    });
+  }
+
   void startUpload(BuildContext context) async {
     var tagList = tags.where((e) => states[e.index])
         .map((e) => e.label)
         .toList();
+    tagList.addAll(extraTags.map((e) => e.label));
     //TODO set state to show spinner while this happens
     Directory appSuppDir = await getApplicationSupportDirectory();
     String destination = join(appSuppDir.path, "pending");
@@ -184,7 +230,15 @@ class _TakePictureState extends State<TakePicturePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Wrap(
                           spacing: 2,
-                          children: tags,
+                          children: List.generate(1 + tags.length + extraTags.length, (index) {
+                            if (index < tags.length) {
+                              return tags[index];
+                            }
+                            if (index < tags.length + extraTags.length) {
+                              return extraTags[index - tags.length];
+                            }
+                            return TagWidget("  +  ", (int) => false, (state, index) => promptNewTagName(index, context), index);
+                          }),
                           alignment: WrapAlignment.spaceEvenly,
                         ),
                       ),
