@@ -17,7 +17,7 @@ import 'pages/ErrorPage.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Reference.checkPlatform();
-  //todo initialize settings defaults
+  //TODO initialize settings defaults
   runApp(
       MultiProvider(
         providers: [
@@ -111,9 +111,6 @@ class AppContainer extends StatelessWidget with WidgetsBindingObserver {
               return MaterialPageRoute(builder: (context) => TakePicturePage(settings.arguments));
             }
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "/addPicture expects PickedFile data"));
-
-          case '/settings':
-            return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: "Impostazioni non ancora implementate"));
 
           default:
             return MaterialPageRoute(builder: (context) => ErrorPage(errorMessage: args));
